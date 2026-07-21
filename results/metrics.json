@@ -1,0 +1,163 @@
+{
+  "decision_quality": {
+    "threshold": {
+      "no_shift": {
+        "FNR": 0.22,
+        "FPR": 0.0,
+        "F1": 0.88,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "adverse": {
+        "FNR": 1.0,
+        "FPR": 0.0,
+        "F1": 0.0,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "favorable": {
+        "FNR": 0.0,
+        "FPR": 0.27,
+        "F1": 0.86,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "natural": {
+        "FNR": 0.06,
+        "FPR": 0.0,
+        "F1": 0.97,
+        "n": 49,
+        "P": 18,
+        "N": 31
+      }
+    },
+    "cusum": {
+      "no_shift": {
+        "FNR": 0.22,
+        "FPR": 0.0,
+        "F1": 0.88,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "adverse": {
+        "FNR": 0.0,
+        "FPR": 0.09,
+        "F1": 0.95,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "favorable": {
+        "FNR": 0.0,
+        "FPR": 0.27,
+        "F1": 0.86,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "natural": {
+        "FNR": 0.0,
+        "FPR": 0.45,
+        "F1": 0.72,
+        "n": 49,
+        "P": 18,
+        "N": 31
+      }
+    },
+    "agent_rule": {
+      "no_shift": {
+        "FNR": 0.22,
+        "FPR": 0.0,
+        "F1": 0.88,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "adverse": {
+        "FNR": 0.0,
+        "FPR": 0.18,
+        "F1": 0.9,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "favorable": {
+        "FNR": 0.0,
+        "FPR": 0.27,
+        "F1": 0.86,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "natural": {
+        "FNR": 0.06,
+        "FPR": 0.0,
+        "F1": 0.97,
+        "n": 49,
+        "P": 18,
+        "N": 31
+      }
+    },
+    "agent_llm": {
+      "no_shift": {
+        "FNR": 0.22,
+        "FPR": 0.0,
+        "F1": 0.88,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "adverse": {
+        "FNR": 0.0,
+        "FPR": 0.27,
+        "F1": 0.86,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "favorable": {
+        "FNR": 0.0,
+        "FPR": 0.27,
+        "F1": 0.86,
+        "n": 20,
+        "P": 9,
+        "N": 11
+      },
+      "natural": {
+        "FNR": 0.06,
+        "FPR": 0.0,
+        "F1": 0.97,
+        "n": 49,
+        "P": 18,
+        "N": 31
+      }
+    }
+  },
+  "shift_detection": {
+    "cusum": {
+      "precision": 1.0,
+      "recall": 0.83,
+      "F1": 0.91,
+      "first_detect_cycle": 31,
+      "latency_cycles": 8
+    },
+    "agent_rule": {
+      "precision": 1.0,
+      "recall": 0.92,
+      "F1": 0.96,
+      "first_detect_cycle": 28,
+      "latency_cycles": 5
+    },
+    "agent_llm": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "F1": 1.0,
+      "first_detect_cycle": 25,
+      "latency_cycles": 2
+    }
+  }
+}
