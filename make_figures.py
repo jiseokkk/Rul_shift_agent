@@ -9,7 +9,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-import config as C
+import han.Rul_shift_agent.rul_shift_agent.config as C
 
 SCEN = ["no_shift", "adverse", "favorable", "natural"]
 SCEN_LABEL = {"no_shift": "No shift", "adverse": "Adverse", "favorable": "Favorable",

@@ -7,12 +7,15 @@ Positive (maintenance-required) class = {inspect, replace}.
 
 Shift detection (Direction A adverse): ground truth = post-onset points.
 Latency = first post-onset cycle a method escalates off 'continue'.
+
+RUL correction: RMSE/MAE of the agent's effective RUL (corrected once the shift is
+confirmed) vs the capped true RUL, against the uncorrected model estimate.
 """
 import glob
 import json
 import os
 
-import config as C
+import han.Rul_shift_agent.rul_shift_agent.config as C
 
 SCENARIOS = ["no_shift", "adverse", "favorable", "natural"]
 
@@ -72,9 +75,33 @@ def escalation_flag_rows(rows, pred_key):
     return [{**r, "_flag": r[pred_key] != "continue"} for r in rows]
 
 
+def rul_correction_metrics(rows):
+    """RMSE/MAE vs (capped) true RUL: model's raw estimate vs the agent's effective
+    RUL (corrected once the shift is confirmed).  Per scenario + adverse/favorable
+    post-onset only, where the correction actually matters."""
+    def err(rs, key):
+        pairs = [(min(r["true_rul"], C.RUL_CAP), r[key]) for r in rs
+                 if r.get(key) is not None]
+        if not pairs:
+            return None
+        d = [t - p for t, p in pairs]
+        rmse = (sum(x * x for x in d) / len(d)) ** 0.5
+        mae = sum(abs(x) for x in d) / len(d)
+        return {"RMSE": round(rmse, 2), "MAE": round(mae, 2), "n": len(d)}
+
+    out = {}
+    for s in SCENARIOS:
+        rs = [r for r in rows if r["scenario"] == s]
+        out[s] = {"model": err(rs, "rul_point"), "agent": err(rs, "rul_used")}
+    for s in ("adverse", "favorable"):
+        rs = [r for r in rows if r["scenario"] == s and r["cycle"] >= C.BIAS_ONSET_CYCLE]
+        out[f"{s}_post_onset"] = {"model": err(rs, "rul_point"), "agent": err(rs, "rul_used")}
+    return out
+
+
 def main():
     base = json.load(open(C.RES_DIR + "/baseline_decisions.json"))
-    metrics = {"decision_quality": {}, "shift_detection": {}}
+    metrics = {"decision_quality": {}, "shift_detection": {}, "rul_correction": {}}
 
     # baselines
     metrics["decision_quality"]["threshold"] = per_scenario(base, "threshold")
@@ -97,6 +124,9 @@ def main():
         flagged = [{**r, "_flag": r.get("confirmed_shift") or (r["agent"] != "continue" and r.get("shift_detected"))}
                    for r in rows]
         metrics["shift_detection"][f"agent_{name}"] = shift_detection(flagged, "_flag")
+        # RUL correction quality (rows without rul_used = legacy runs -> skipped)
+        if any(r.get("rul_used") is not None for r in rows):
+            metrics["rul_correction"][f"agent_{name}"] = rul_correction_metrics(rows)
 
     with open(C.RES_DIR + "/metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
@@ -115,6 +145,13 @@ def main():
     for m, d in metrics["shift_detection"].items():
         print(f"{m:16s} P={d['precision']:.2f} R={d['recall']:.2f} F1={d['F1']:.2f}"
               f"  latency={d['latency_cycles']} cycles (first@{d['first_detect_cycle']})")
+    if metrics["rul_correction"]:
+        print("\n=== RUL CORRECTION (RMSE model -> agent, vs capped true RUL) ===")
+        for m, d in metrics["rul_correction"].items():
+            for s, q in d.items():
+                if q["model"] and q["agent"]:
+                    print(f"{m:16s} {s:20s} model={q['model']['RMSE']:6.2f}"
+                          f" -> agent={q['agent']['RMSE']:6.2f}  (n={q['agent']['n']})")
     print(f"\n[evaluate] metrics -> {C.RES_DIR}/metrics.json")
 
 

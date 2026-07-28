@@ -10,7 +10,7 @@ The dev arrays hold units {2,5,10,16,18,20}; the test arrays hold {11,14,15}.
 import h5py
 import numpy as np
 
-import config as C
+import han.Rul_shift_agent.rul_shift_agent.config as C
 
 
 # --------------------------------------------------------------------------- #

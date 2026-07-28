@@ -8,14 +8,18 @@ shared Tier-2 decision policy.
 
 CUSUM is NOT used here — it stays a pure comparison baseline (baselines.py).
 
+Each vote carries a CORRECTED RUL (the agent's best estimate of the true RUL under
+the detected shift).  The final decision thresholds the effective RUL: corrected
+(median over samples) once the shift is confirmed, the model's raw estimate otherwise.
+
 Tier-2 policy (applied identically to both agents, over the raw votes):
-  #5 hysteresis   : a shift-driven escalation on a still-healthy horizon is damped
-                    until the shift persists HYSTERESIS_N consecutive decision points
-                    -> removes the isolated natural-shift false alarms (Case C).
-  #6 cost-aware   : once an adverse shift is confirmed, the model's (inflated) RUL is
-                    not trusted -> floor at inspect; a favorable (over-pessimistic)
-                    shift caps the action at inspect to avoid retiring a healthy asset;
-                    low confidence prefers the safe middle (inspect).
+  #5 hysteresis   : the correction is trusted only after the shift persists
+                    HYSTERESIS_N consecutive decision points -> a transient shift
+                    vote cannot trigger a false correction (Case C false alarms).
+  #6 cost-aware   : guard rails around the correction — a confirmed adverse shift
+                    floors the action at inspect (the correction itself needs
+                    verifying); a favorable shift caps it at inspect (never retire
+                    a healthy asset); low confidence prefers the safe middle.
 """
 import argparse
 import json
@@ -23,8 +27,8 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-import config as C
-from prompt import build_messages
+import han.Rul_shift_agent.rul_shift_agent.config as C
+from han.Rul_shift_agent.rul_shift_agent.prompt import build_messages
 
 PKT_PATH = C.PKT_DIR + "/packets.json"
 
@@ -54,53 +58,67 @@ def aggregate(votes):
     shift_frac = sum(1 for x in votes if x.get("shift_detected")) / max(1, len(votes))
     conf = np.mean([float(x.get("confidence", 0.5)) for x in votes]) if votes else 0.5
     rel = Counter(x.get("reliability", "high") for x in votes).most_common(1)[0][0]
+    # corrected RUL: median over valid numeric samples (robust to one bad parse)
+    corr = [float(x["corrected_rul"]) for x in votes
+            if isinstance(x.get("corrected_rul"), (int, float))]
+    corrected = float(np.clip(np.median(corr), 0.0, C.RUL_CAP)) if corr else None
     return {"decision": maj_dec, "shift_detected": shift_frac >= 0.5,
             "shift_frac": round(shift_frac, 2), "shift_direction": maj_dir,
             "reliability": rel, "confidence": round(float(conf), 2),
+            "corrected_rul": None if corrected is None else round(corrected, 2),
             "agreement": round(dec[maj_dec] / max(1, len(votes)), 2)}
 
 
 # --------------------------------------------------------------------------- #
 # Tier-2 decision policy
 # --------------------------------------------------------------------------- #
+def _threshold_decision(rul):
+    if rul <= C.REPLACE_RUL:
+        return "replace"
+    if rul <= C.INSPECT_RUL:
+        return "inspect"
+    return "continue"
+
+
 def apply_policy(packet, agg, state, abl=ABL_FULL):
-    """state: mutable dict per (scenario,unit) holding the hysteresis counter."""
-    dec = agg["decision"]
-    lvl = C.DEC_LEVEL[dec]
-    rul = packet["rul"]["point"]
+    """state: mutable dict per (scenario,unit) holding the hysteresis counter.
+
+    Decision rule: threshold the EFFECTIVE RUL — the agent's corrected RUL once a
+    shift is confirmed (hysteresis), the model's raw estimate otherwise.  The
+    hysteresis gate keeps a single transient shift vote from triggering a false
+    correction (Case C natural-shift false alarms)."""
+    rul_raw = packet["rul"]["point"]
     shift = agg["shift_detected"]
     direction = agg["shift_direction"]
+    corrected = agg.get("corrected_rul")
 
     # hysteresis counter over consecutive shift-detected points
     state["run"] = state.get("run", 0) + 1 if shift else 0
     need = C.HYSTERESIS_N if abl["hysteresis"] else 1
     confirmed = shift and state["run"] >= need
 
-    horizon_safe = rul > 2 * C.INSPECT_RUL          # model says comfortably far from EOL
+    # ---- Tier-2 #5 hysteresis gates the correction ----
+    use_corr = bool(confirmed and direction != "none" and corrected is not None)
+    rul_eff = corrected if use_corr else rul_raw
 
-    # ---- Tier-2 #5 hysteresis: damp a transient shift-driven inspect ----
-    if (abl["hysteresis"] and shift and not confirmed and direction != "none"
-            and dec == "inspect" and horizon_safe):
-        lvl = C.DEC_LEVEL["continue"]
+    lvl = C.DEC_LEVEL[_threshold_decision(rul_eff)]
 
-    if not abl["cost_aware"]:
-        return C.DECISIONS[lvl], {"confirmed_shift": bool(confirmed), "run": state["run"]}
-
-    # ---- Tier-2 #6 cost-aware ----
-    if confirmed and direction == "adverse":
-        # over-optimistic model: do not trust its high RUL -> at least inspect;
-        # if the model itself already sees a short/uncertain horizon -> replace.
-        lvl = max(lvl, C.DEC_LEVEL["inspect"])
-        if rul <= C.INSPECT_RUL or agg["reliability"] == "low":
-            lvl = max(lvl, C.DEC_LEVEL["replace"] if rul <= C.REPLACE_RUL else C.DEC_LEVEL["inspect"])
-    if confirmed and direction == "favorable":
-        # over-pessimistic model: avoid retiring a possibly-healthy asset.
-        lvl = min(lvl, C.DEC_LEVEL["inspect"])
-    if agg["confidence"] < 0.5 and lvl == C.DEC_LEVEL["continue"] and shift:
-        lvl = C.DEC_LEVEL["inspect"]                 # abstain to the safe middle
+    # ---- Tier-2 #6 cost-aware guard rails around the correction ----
+    if abl["cost_aware"]:
+        if confirmed and direction == "adverse":
+            # a confirmed adverse shift deserves at least a look, even if the
+            # corrected horizon is long — the correction itself needs verifying.
+            lvl = max(lvl, C.DEC_LEVEL["inspect"])
+        if confirmed and direction == "favorable":
+            # over-pessimistic model: never retire a possibly-healthy asset.
+            lvl = min(lvl, C.DEC_LEVEL["inspect"])
+        if agg["confidence"] < 0.5 and lvl == C.DEC_LEVEL["continue"] and shift:
+            lvl = C.DEC_LEVEL["inspect"]             # abstain to the safe middle
 
     final = C.DECISIONS[lvl]
-    return final, {"confirmed_shift": bool(confirmed), "run": state["run"]}
+    return final, {"confirmed_shift": bool(confirmed), "run": state["run"],
+                   "rul_used": round(float(rul_eff), 2),
+                   "correction_applied": use_corr}
 
 
 def finalize(packets, raw_votes_by_key, abl=ABL_FULL):
@@ -122,6 +140,8 @@ def finalize(packets, raw_votes_by_key, abl=ABL_FULL):
                 "gt_label": p["gt_label"], "true_rul": p["true_rul"],
                 "rul_point": p["rul"]["point"], "mc_std": p["rul"]["mc_std"],
                 "agent_raw": agg["decision"], "agent": final,
+                "corrected_rul": agg.get("corrected_rul"), "rul_used": meta["rul_used"],
+                "correction_applied": meta["correction_applied"],
                 "shift_detected": agg["shift_detected"], "shift_frac": agg["shift_frac"],
                 "shift_direction": agg["shift_direction"], "confirmed_shift": meta["confirmed_shift"],
                 "reliability": agg["reliability"], "confidence": agg["confidence"],
@@ -133,6 +153,19 @@ def finalize(packets, raw_votes_by_key, abl=ABL_FULL):
 # --------------------------------------------------------------------------- #
 # Rule-based reference agent (no LLM)
 # --------------------------------------------------------------------------- #
+def _history_correction(packet):
+    """Corrected RUL from the RUL history: the largest step-jump marks the shift
+    onset; the pre-jump estimate was trustworthy and true RUL falls 1/cycle, so
+    extrapolate it down to now.  None if no onset jump is visible."""
+    h = packet["rul"]["history"]
+    jumps = [abs(h[i + 1] - h[i]) for i in range(len(h) - 1)]
+    if not jumps or max(jumps) < C.CORR_JUMP:
+        return None
+    i = int(np.argmax(jumps))                  # last trusted point sits before the jump
+    steps_since = (len(h) - 1) - i
+    return float(np.clip(h[i] - C.DECISION_EVERY * steps_since, 0.0, C.RUL_CAP))
+
+
 def rule_vote(packet, rng, abl=ABL_FULL):
     agg = packet["features"]["agg"]
     rul = packet["rul"]["point"]
@@ -153,13 +186,18 @@ def rule_vote(packet, rng, abl=ABL_FULL):
         real_shift = gz > 0.6
         direction = "adverse" if real_shift else "none"   # direction-blind fallback
 
-    # base decision from RUL horizon
-    if rul <= C.REPLACE_RUL:
-        dec = "replace"
-    elif rul <= C.INSPECT_RUL:
-        dec = "inspect"
+    # deterministic RUL correction: anchor on the pre-shift history level and
+    # extrapolate at 1 cycle/cycle (the same procedure the LLM prompt prescribes);
+    # if no onset jump is visible, fall back to a regime_z-proportional correction.
+    if real_shift and direction != "none":
+        corrected = _history_correction(packet)
+        if corrected is None:
+            corrected = float(np.clip(rul + C.RULE_CORR_GAIN * regime, 0.0, C.RUL_CAP))
     else:
-        dec = "continue"
+        corrected = float(rul)
+
+    # decision from the corrected horizon
+    dec = _threshold_decision(corrected)
     if real_shift and direction == "adverse":
         dec = "inspect" if dec == "continue" else dec
 
@@ -168,7 +206,8 @@ def rule_vote(packet, rng, abl=ABL_FULL):
     mag = min(1.0, 0.5 + 0.1 * cons + 0.3 * (mc_std > 3))
     conf = float(np.clip(mag + rng.normal(0, 0.03), 0.0, 1.0))
     return {"shift_detected": bool(real_shift), "shift_direction": direction,
-            "reliability": reliability, "decision": dec, "confidence": round(conf, 2),
+            "reliability": reliability, "corrected_rul": round(corrected, 2),
+            "decision": dec, "confidence": round(conf, 2),
             "reasoning": "rule"}
 
 
@@ -185,13 +224,24 @@ def run_rule(packets, samples=C.LLM_SAMPLES, seed=C.SEED, abl=ABL_FULL):
 # LLM agent (vLLM + local Qwen AWQ)
 # --------------------------------------------------------------------------- #
 def parse_json(text):
-    s, e = text.find("{"), text.rfind("}")
-    if s == -1 or e == -1:
-        return {"parse_error": True}
-    try:
-        return json.loads(text[s:e + 1])
-    except Exception:
-        return {"parse_error": True}
+    """Extract the FINAL decision object.  The reasoning may contain LaTeX braces
+    (\\text{...}) or quoted JSON templates, so a first-{-to-last-} slice is not
+    reliable: scan '{' positions from the END and return the first valid dict that
+    carries a decision — that is the FINAL line's object."""
+    dec = json.JSONDecoder()
+    fallback = None
+    for i in range(len(text) - 1, -1, -1):
+        if text[i] != "{":
+            continue
+        try:
+            obj, _ = dec.raw_decode(text[i:])
+        except Exception:
+            continue
+        if isinstance(obj, dict):
+            if "decision" in obj:
+                return obj
+            fallback = fallback or obj
+    return fallback or {"parse_error": True}
 
 
 def run_llm(packets, samples=C.LLM_SAMPLES, gpu_mem=0.90, raw_path=None):
@@ -217,7 +267,7 @@ def run_llm(packets, samples=C.LLM_SAMPLES, gpu_mem=0.90, raw_path=None):
             j = parse_json(comp.text)
             votes[key].append(j)
             if raw_fh:
-                raw_fh.write(json.dumps({"key": list(key), "text": comp.text[:1500],
+                raw_fh.write(json.dumps({"key": list(key), "text": comp.text,
                                          "parsed": j}) + "\n")
     if raw_fh:
         raw_fh.close()

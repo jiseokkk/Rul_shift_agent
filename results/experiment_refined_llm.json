@@ -1,0 +1,88 @@
+{
+  "agent": "llm",
+  "config": {
+    "cons_target": 4.0,
+    "ramp_len": 15,
+    "onset_frac": 0.45
+  },
+  "meta": {
+    "no_shift": {},
+    "adverse_single": {
+      "11": {
+        "onset": 27,
+        "realised_cons": 4.0,
+        "delta": {
+          "T48": -51.27
+        }
+      }
+    },
+    "adverse_temp4": {
+      "11": {
+        "onset": 27,
+        "realised_cons": 4.0,
+        "delta": {
+          "T24": -9.92,
+          "T30": -30.6,
+          "T48": -54.25,
+          "T50": -28.51
+        }
+      }
+    },
+    "favorable": {
+      "11": {
+        "onset": 27,
+        "realised_cons": 4.0,
+        "delta": {
+          "T48": 51.27
+        }
+      }
+    },
+    "natural": {}
+  },
+  "summary": {
+    "no_shift": {
+      "FNR": 0.11,
+      "FPR": 0.18,
+      "F1": 0.84,
+      "n": 20,
+      "P": 9,
+      "N": 11
+    },
+    "adverse_single": {
+      "FNR": 0.11,
+      "FPR": 0.27,
+      "F1": 0.8,
+      "n": 20,
+      "P": 9,
+      "N": 11,
+      "shift_recall": 0.82,
+      "latency": 1
+    },
+    "adverse_temp4": {
+      "FNR": 0.0,
+      "FPR": 0.27,
+      "F1": 0.86,
+      "n": 20,
+      "P": 9,
+      "N": 11,
+      "shift_recall": 1.0,
+      "latency": 1
+    },
+    "favorable": {
+      "FNR": 0.0,
+      "FPR": 0.18,
+      "F1": 0.9,
+      "n": 20,
+      "P": 9,
+      "N": 11
+    },
+    "natural": {
+      "FNR": 0.06,
+      "FPR": 0.16,
+      "F1": 0.85,
+      "n": 49,
+      "P": 18,
+      "N": 31
+    }
+  }
+}

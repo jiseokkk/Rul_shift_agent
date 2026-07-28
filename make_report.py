@@ -1,7 +1,7 @@
 """Compose results/experiment_report.md from metrics.json + ablation.json."""
 import json
 
-import config as C
+import han.Rul_shift_agent.rul_shift_agent.config as C
 
 SCEN = ["no_shift", "adverse", "favorable", "natural"]
 SLAB = {"no_shift": "No shift", "adverse": "Adverse", "favorable": "Favorable",

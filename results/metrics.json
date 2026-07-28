@@ -86,9 +86,9 @@
         "N": 11
       },
       "favorable": {
-        "FNR": 0.0,
-        "FPR": 0.27,
-        "F1": 0.86,
+        "FNR": 0.44,
+        "FPR": 0.09,
+        "F1": 0.67,
         "n": 20,
         "P": 9,
         "N": 11
@@ -104,25 +104,25 @@
     },
     "agent_llm": {
       "no_shift": {
-        "FNR": 0.22,
-        "FPR": 0.0,
-        "F1": 0.88,
+        "FNR": 0.33,
+        "FPR": 0.09,
+        "F1": 0.75,
         "n": 20,
         "P": 9,
         "N": 11
       },
       "adverse": {
         "FNR": 0.0,
-        "FPR": 0.27,
-        "F1": 0.86,
+        "FPR": 0.36,
+        "F1": 0.82,
         "n": 20,
         "P": 9,
         "N": 11
       },
       "favorable": {
-        "FNR": 0.0,
-        "FPR": 0.27,
-        "F1": 0.86,
+        "FNR": 0.67,
+        "FPR": 0.09,
+        "F1": 0.46,
         "n": 20,
         "P": 9,
         "N": 11
@@ -153,11 +153,161 @@
       "latency_cycles": 5
     },
     "agent_llm": {
-      "precision": 1.0,
+      "precision": 0.92,
       "recall": 1.0,
-      "F1": 1.0,
+      "F1": 0.96,
       "first_detect_cycle": 25,
       "latency_cycles": 2
+    }
+  },
+  "rul_correction": {
+    "agent_rule": {
+      "no_shift": {
+        "model": {
+          "RMSE": 6.07,
+          "MAE": 4.94,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 6.07,
+          "MAE": 4.94,
+          "n": 20
+        }
+      },
+      "adverse": {
+        "model": {
+          "RMSE": 37.19,
+          "MAE": 30.09,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 10.45,
+          "MAE": 8.65,
+          "n": 20
+        }
+      },
+      "favorable": {
+        "model": {
+          "RMSE": 17.11,
+          "MAE": 13.38,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 11.21,
+          "MAE": 8.9,
+          "n": 20
+        }
+      },
+      "natural": {
+        "model": {
+          "RMSE": 3.96,
+          "MAE": 3.05,
+          "n": 49
+        },
+        "agent": {
+          "RMSE": 3.96,
+          "MAE": 3.05,
+          "n": 49
+        }
+      },
+      "adverse_post_onset": {
+        "model": {
+          "RMSE": 47.68,
+          "MAE": 46.52,
+          "n": 12
+        },
+        "agent": {
+          "RMSE": 12.25,
+          "MAE": 10.78,
+          "n": 12
+        }
+      },
+      "favorable_post_onset": {
+        "model": {
+          "RMSE": 21.35,
+          "MAE": 18.66,
+          "n": 12
+        },
+        "agent": {
+          "RMSE": 13.33,
+          "MAE": 11.21,
+          "n": 12
+        }
+      }
+    },
+    "agent_llm": {
+      "no_shift": {
+        "model": {
+          "RMSE": 6.07,
+          "MAE": 4.94,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 9.03,
+          "MAE": 6.76,
+          "n": 20
+        }
+      },
+      "adverse": {
+        "model": {
+          "RMSE": 37.19,
+          "MAE": 30.09,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 16.47,
+          "MAE": 11.88,
+          "n": 20
+        }
+      },
+      "favorable": {
+        "model": {
+          "RMSE": 17.11,
+          "MAE": 13.38,
+          "n": 20
+        },
+        "agent": {
+          "RMSE": 13.43,
+          "MAE": 10.88,
+          "n": 20
+        }
+      },
+      "natural": {
+        "model": {
+          "RMSE": 3.96,
+          "MAE": 3.05,
+          "n": 49
+        },
+        "agent": {
+          "RMSE": 4.72,
+          "MAE": 3.6,
+          "n": 49
+        }
+      },
+      "adverse_post_onset": {
+        "model": {
+          "RMSE": 47.68,
+          "MAE": 46.52,
+          "n": 12
+        },
+        "agent": {
+          "RMSE": 20.49,
+          "MAE": 16.17,
+          "n": 12
+        }
+      },
+      "favorable_post_onset": {
+        "model": {
+          "RMSE": 21.35,
+          "MAE": 18.66,
+          "n": 12
+        },
+        "agent": {
+          "RMSE": 16.3,
+          "MAE": 14.34,
+          "n": 12
+        }
+      }
     }
   }
 }

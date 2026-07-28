@@ -95,11 +95,20 @@ CUSUM_TARGET_FAR = 0.0 # calibrate h on VAL_UNIT for zero in-distribution false-
 LLM_PATH = "/home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ"
 LLM_SAMPLES = 5        # samples per decision point (majority vote)
 LLM_TEMPERATURE = 0.7
-LLM_MAX_TOKENS = 900
-HISTORY_K = 5          # RUL-history length exposed to the agent
+LLM_MAX_TOKENS = 1500   # v2 prompt reasons longer; 900 truncated ~18% of FINAL JSONs
+HISTORY_K = 20         # RUL-history length exposed to the agent (decision points).
+                       # Long enough to keep the PRE-shift level visible for the
+                       # whole life -> the agent can anchor its RUL correction on it.
 
 # Tier-2 #5 hysteresis: consecutive shift votes required before escalating on shift
 HYSTERESIS_N = 2
+# RUL correction: once a shift is confirmed the agent's corrected RUL (median over
+# samples) replaces the model's point estimate in the threshold decision rule.
+# Rule-reference agent: a history step-jump larger than this marks the shift onset;
+# the pre-jump level extrapolated at 1 cycle/cycle is the corrected RUL.
+CORR_JUMP = 10.0
+# Fallback (no visible onset jump): cycles of correction per unit of signed temp regime_z.
+RULE_CORR_GAIN = 1.0
 # Tier-2 #6 cost-aware decision: miss (FN) is this many times costlier than a false alarm
 COST_RATIO_FN_FP = 5.0
 

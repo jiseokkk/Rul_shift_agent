@@ -1,0 +1,91 @@
+{
+  "onset_cycle": 27,
+  "life": 59,
+  "detector_stat": "temp_consistency_z_abs",
+  "A_difficulty_sweep_temp4": [
+    {
+      "target": 1.0,
+      "realised_cons": 1.0,
+      "recall": 0.0,
+      "FNR": 0.22,
+      "F1": 0.88,
+      "latency": null
+    },
+    {
+      "target": 2.0,
+      "realised_cons": 2.0,
+      "recall": 0.0,
+      "FNR": 0.78,
+      "F1": 0.36,
+      "latency": null
+    },
+    {
+      "target": 3.0,
+      "realised_cons": 3.0,
+      "recall": 0.45,
+      "FNR": 0.44,
+      "F1": 0.71,
+      "latency": 19
+    },
+    {
+      "target": 4.0,
+      "realised_cons": 4.0,
+      "recall": 0.64,
+      "FNR": 0.22,
+      "F1": 0.88,
+      "latency": 13
+    },
+    {
+      "target": 6.0,
+      "realised_cons": 6.0,
+      "recall": 0.73,
+      "FNR": 0.11,
+      "F1": 0.94,
+      "latency": 10
+    }
+  ],
+  "B_sigma_method": [
+    {
+      "scope": "single(T48)",
+      "det_cons": 3.84,
+      "recall": 0.73,
+      "FNR": 0.11
+    },
+    {
+      "scope": "temp2(T48,T50)",
+      "det_cons": 2.07,
+      "recall": 0.0,
+      "FNR": 1.0
+    },
+    {
+      "scope": "temp4",
+      "det_cons": 3.6,
+      "recall": 0.55,
+      "FNR": 0.33
+    }
+  ],
+  "B_snr_method": [
+    {
+      "scope": "single(T48)",
+      "det_cons": 4.0,
+      "recall": 0.73,
+      "FNR": 0.11
+    },
+    {
+      "scope": "temp2(T48,T50)",
+      "det_cons": 4.0,
+      "recall": 0.64,
+      "FNR": 0.22
+    },
+    {
+      "scope": "temp4",
+      "det_cons": 4.0,
+      "recall": 0.64,
+      "FNR": 0.22
+    }
+  ],
+  "B_recall_spread": {
+    "sigma": 0.73,
+    "snr": 0.09
+  }
+}

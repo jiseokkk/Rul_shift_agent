@@ -1,0 +1,34 @@
+{
+  "no_shift": {},
+  "adverse_single": {
+    "11": {
+      "onset": 27,
+      "realised_cons": 4.0,
+      "delta": {
+        "T48": -51.27
+      }
+    }
+  },
+  "adverse_temp4": {
+    "11": {
+      "onset": 27,
+      "realised_cons": 4.0,
+      "delta": {
+        "T24": -9.92,
+        "T30": -30.6,
+        "T48": -54.25,
+        "T50": -28.51
+      }
+    }
+  },
+  "favorable": {
+    "11": {
+      "onset": 27,
+      "realised_cons": 4.0,
+      "delta": {
+        "T48": 51.27
+      }
+    }
+  },
+  "natural": {}
+}

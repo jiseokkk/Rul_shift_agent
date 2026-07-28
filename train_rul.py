@@ -8,9 +8,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 
-import config as C
-import data_ncmapss as D
-from rul_tool import RULModel, fit_scaler, scale, SCALER_PATH, MODEL_PATH
+import han.Rul_shift_agent.rul_shift_agent.config as C
+import han.Rul_shift_agent.rul_shift_agent.data_ncmapss as D
+from han.Rul_shift_agent.rul_shift_agent.rul_tool import RULModel, fit_scaler, scale, SCALER_PATH, MODEL_PATH
 
 
 def set_seed(s=C.SEED):
