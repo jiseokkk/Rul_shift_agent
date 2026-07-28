@@ -1,0 +1,6 @@
+# data (28GB — never push)
+dataset/
+
+# python
+__pycache__/
+*.pyc

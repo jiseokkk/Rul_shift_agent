@@ -11,7 +11,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
+import han.Rul_shift_agent.config as C
 
 R = json.load(open(C.RES_DIR + "/snr_experiment.json"))
 OUT = C.FIG_DIR + "/snr_experiment_summary.png"

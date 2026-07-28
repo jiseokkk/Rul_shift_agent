@@ -19,21 +19,21 @@ B) sigma vs cons — which knob holds difficulty constant across channel scopes?
 
 Injection: drift, 15-cycle ramp, onset 45% life (cycle 27), adverse sign.
 Run:
-   PYTHONPATH=/home/iai4/Desktop:/home/iai4/Desktop/han/Rul_shift_agent/rul_shift_agent \
+   PYTHONPATH=/home/iai4/Desktop \
      /home/iai4/miniconda3/envs/LLMshift/bin/python \
-     -m han.Rul_shift_agent.rul_shift_agent.snr_experiment
+     -m han.Rul_shift_agent.snr_experiment
 """
 import json
 import numpy as np
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
-import han.Rul_shift_agent.rul_shift_agent.data_ncmapss as D
-import han.Rul_shift_agent.rul_shift_agent.inject as I
-from han.Rul_shift_agent.rul_shift_agent.preprocess import FeatureExtractor
-from han.Rul_shift_agent.rul_shift_agent.rul_tool import RULTool
-from han.Rul_shift_agent.rul_shift_agent.build_decisions import gt_label, decision_cycles
-from han.Rul_shift_agent.rul_shift_agent.agent import run_rule, finalize
-from han.Rul_shift_agent.rul_shift_agent.evaluate import per_scenario, shift_detection
+import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.data_ncmapss as D
+import han.Rul_shift_agent.inject as I
+from han.Rul_shift_agent.preprocess import FeatureExtractor
+from han.Rul_shift_agent.rul_tool import RULTool
+from han.Rul_shift_agent.build_decisions import gt_label, decision_cycles
+from han.Rul_shift_agent.agent import run_rule, finalize
+from han.Rul_shift_agent.evaluate import per_scenario, shift_detection
 
 ONSET_FRAC = 0.45
 RAMP_LEN = 15

@@ -15,13 +15,13 @@ Rule agent only (fast, deterministic) so we isolate the *feature* difficulty.
 """
 import numpy as np
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
-import han.Rul_shift_agent.rul_shift_agent.data_ncmapss as D
-from han.Rul_shift_agent.rul_shift_agent.preprocess import FeatureExtractor
-from han.Rul_shift_agent.rul_shift_agent.rul_tool import RULTool
-from han.Rul_shift_agent.rul_shift_agent.build_decisions import gt_label, decision_cycles
-from han.Rul_shift_agent.rul_shift_agent.agent import run_rule, finalize
-from han.Rul_shift_agent.rul_shift_agent.evaluate import per_scenario, shift_detection
+import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.data_ncmapss as D
+from han.Rul_shift_agent.preprocess import FeatureExtractor
+from han.Rul_shift_agent.rul_tool import RULTool
+from han.Rul_shift_agent.build_decisions import gt_label, decision_cycles
+from han.Rul_shift_agent.agent import run_rule, finalize
+from han.Rul_shift_agent.evaluate import per_scenario, shift_detection
 
 CH_STD = None
 

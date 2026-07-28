@@ -14,9 +14,9 @@ natural-shift decision quality.  This isolates the contribution of each addition
 """
 import json
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
-from han.Rul_shift_agent.rul_shift_agent.agent import ABL_FULL, run_rule, finalize
-from han.Rul_shift_agent.rul_shift_agent.evaluate import per_scenario, shift_detection
+import han.Rul_shift_agent.config as C
+from han.Rul_shift_agent.agent import ABL_FULL, run_rule, finalize
+from han.Rul_shift_agent.evaluate import per_scenario, shift_detection
 
 PKT_PATH = C.PKT_DIR + "/packets.json"
 

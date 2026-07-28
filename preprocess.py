@@ -29,8 +29,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
-import han.Rul_shift_agent.rul_shift_agent.data_ncmapss as D
+import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.data_ncmapss as D
 
 FEAT_PATH = os.path.join(C.OUT_DIR, "feature_models.npz")
 BASE_PATH = os.path.join(C.OUT_DIR, "train_baseline.json")

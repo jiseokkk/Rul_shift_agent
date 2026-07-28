@@ -25,7 +25,7 @@ from dataclasses import dataclass, field, asdict
 
 import numpy as np
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
+import han.Rul_shift_agent.config as C
 
 
 # --------------------------------------------------------------------------- #

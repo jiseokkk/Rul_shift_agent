@@ -27,8 +27,8 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-import han.Rul_shift_agent.rul_shift_agent.config as C
-from han.Rul_shift_agent.rul_shift_agent.prompt import build_messages
+import han.Rul_shift_agent.config as C
+from han.Rul_shift_agent.prompt import build_messages
 
 PKT_PATH = C.PKT_DIR + "/packets.json"
 
