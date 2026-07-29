@@ -16,7 +16,7 @@ CUSUM is kept purely as a comparison baseline (baselines.py) and is NOT exposed 
 """
 import json
 
-import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.core.config as C
 
 SYSTEM = f"""You are a reliability-audit agent sitting on top of a fixed RUL (remaining useful
 life) estimation model for a turbofan engine. Your job: detect whether a distribution shift

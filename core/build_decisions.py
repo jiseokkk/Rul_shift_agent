@@ -18,10 +18,10 @@ import json
 
 import numpy as np
 
-import han.Rul_shift_agent.config as C
-import han.Rul_shift_agent.data_ncmapss as D
-from han.Rul_shift_agent.preprocess import FeatureExtractor
-from han.Rul_shift_agent.rul_tool import RULTool
+import han.Rul_shift_agent.core.config as C
+import han.Rul_shift_agent.core.data_ncmapss as D
+from han.Rul_shift_agent.core.preprocess import FeatureExtractor
+from han.Rul_shift_agent.core.rul_tool import RULTool
 
 PKT_PATH = C.PKT_DIR + "/packets.json"
 

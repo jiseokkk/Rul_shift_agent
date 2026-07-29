@@ -12,7 +12,7 @@ RUL labels (Y) are copied verbatim — only the observed sensors are corrupted.
 
 Run:
     cd /home/iai4/Desktop
-    /home/iai4/miniconda3/envs/LLMshift/bin/python -m han.Rul_shift_agent.build_corrupted
+    /home/iai4/miniconda3/envs/LLMshift/bin/python -m han.Rul_shift_agent.injection.build_corrupted
 """
 import json
 import os
@@ -23,9 +23,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import han.Rul_shift_agent.config as C
-import han.Rul_shift_agent.inject as I
-from han.Rul_shift_agent.preprocess import FeatureExtractor
+import han.Rul_shift_agent.core.config as C
+import han.Rul_shift_agent.injection.inject as I
+from han.Rul_shift_agent.core.preprocess import FeatureExtractor
 
 SRC_H5 = "/home/iai4/Desktop/han/Rul_shift_agent/dataset/data_set/N-CMAPSS_DS02-006.h5"
 OUT_ROOT = "/home/iai4/Desktop/han/Rul_shift_agent/dataset/corrupted_NCMAPSS"

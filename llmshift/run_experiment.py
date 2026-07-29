@@ -17,19 +17,19 @@ Writes packets to packets/packets_refined.json for a later LLM run.
 Run:
   PYTHONPATH=/home/iai4/Desktop \
     /home/iai4/miniconda3/envs/LLMshift/bin/python \
-    -m han.Rul_shift_agent.run_experiment
+    -m han.Rul_shift_agent.llmshift.run_experiment
 """
 import argparse
 import json
 import numpy as np
 
-import han.Rul_shift_agent.config as C
-import han.Rul_shift_agent.data_ncmapss as D
-import han.Rul_shift_agent.inject as I
-from han.Rul_shift_agent.preprocess import FeatureExtractor
-from han.Rul_shift_agent.build_decisions import gt_label, decision_cycles
-from han.Rul_shift_agent.agent import run_rule, run_llm, finalize
-from han.Rul_shift_agent.evaluate import decision_metrics
+import han.Rul_shift_agent.core.config as C
+import han.Rul_shift_agent.core.data_ncmapss as D
+import han.Rul_shift_agent.injection.inject as I
+from han.Rul_shift_agent.core.preprocess import FeatureExtractor
+from han.Rul_shift_agent.core.build_decisions import gt_label, decision_cycles
+from han.Rul_shift_agent.llmshift.agent import run_rule, run_llm, finalize
+from han.Rul_shift_agent.core.evaluate import decision_metrics
 
 
 def shift_recall(srows, onset):
@@ -192,7 +192,7 @@ def main():
 
 
 def RULTool_():
-    from han.Rul_shift_agent.rul_tool import RULTool
+    from han.Rul_shift_agent.core.rul_tool import RULTool
     return RULTool()
 
 

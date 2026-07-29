@@ -26,17 +26,27 @@ cd /home/iai4/Desktop/han/Rul_shift_agent
 PY=/home/iai4/miniconda3/envs/LLMshift/bin/python
 
 # 전체 파이프라인 (rule 에이전트, LLM 없음 — 빠르고 결정론적)
-$PY run_all.py --agent rule --skip_train
+PYTHONPATH=/home/iai4/Desktop $PY -m han.Rul_shift_agent.llmshift.run_all --agent rule --skip_train
 
 # LLM 에이전트 (vLLM + 로컬 Qwen2.5-32B-AWQ, 2×GPU)
-$PY run_all.py --agent llm --skip_train
+PYTHONPATH=/home/iai4/Desktop $PY -m han.Rul_shift_agent.llmshift.run_all --agent llm --skip_train
 
-# 모듈을 패키지로 직접 실행할 때
-PYTHONPATH=/home/iai4/Desktop $PY -m han.Rul_shift_agent.evaluate
+# 베이스라인 그리드 실험
+PYTHONPATH=/home/iai4/Desktop $PY -m han.Rul_shift_agent.baselines.grid_experiment
 ```
 
-스테이지: `preprocess`(Tier-1 피처 fit) → `train_rul`(LSTM) → `build_decisions`(패킷)
-→ `baselines`(threshold/CUSUM) → `agent`(rule/llm) → `evaluate` → `ablation` → `make_figures`.
+스테이지: `core.preprocess`(Tier-1 피처 fit) → `core.train_rul`(LSTM) →
+`core.build_decisions`(패킷) → `baselines.cusum` → `llmshift.agent`(rule/llm) →
+`core.evaluate` → `llmshift.ablation` → `llmshift.make_figures`.
+
+## 폴더 구조
+
+| 폴더 | 내용 |
+|---|---|
+| `core/` | 공용 기반 — config, 데이터 로더, 피처 추출, LSTM RUL 모델, 패킷 빌더, 평가 |
+| `llmshift/` | LLM/rule 에이전트 — agent, prompt, ablation, 실험 러너, 리포트 |
+| `baselines/` | 감지 베이스라인 — CUSUM, PCA-SPE/T² + 그리드 실험 |
+| `injection/` | 데이터셋 조작 — FaultSpec 주입 엔진, corrupted 데이터셋 빌더 |
 
 데이터 `dataset/`(≈28GB)은 git에 올리지 않는다. `config.py`의 `DATA_H5` 경로에
 N-CMAPSS DS02-006 h5를 두면 된다. LLM 경로는 `config.py`의 `LLM_PATH`.
@@ -45,13 +55,14 @@ N-CMAPSS DS02-006 h5를 두면 된다. LLM 경로는 `config.py`의 `LLM_PATH`.
 
 | 파일 | 역할 |
 |---|---|
-| `config.py` | 전 파라미터 (units, thresholds, `HISTORY_K=20`, `CORR_JUMP` 등) |
-| `agent.py` | rule/LLM 에이전트: 감지 + 앵커 보정 + hysteresis/가드레일 + parse_json |
-| `prompt.py` | LLM 프롬프트 (cause gate, END-OF-LIFE≠shift, 보정 산식) |
-| `inject.py` / `build_corrupted.py` | FaultSpec 주입, 감지기-정렬 SNR 난이도 캘리브레이션 |
-| `baselines.py` | threshold + per-channel CUSUM (unit 20 zero-FAR 캘리브레이션) |
-| `evaluate.py` | 결정 F1 / shift 감지 / rul_correction RMSE·MAE |
-| `run_experiment.py`, `snr_experiment.py` | rule-vs-LLM 실험, σ-vs-SNR 난이도 실험 |
+| `core/config.py` | 전 파라미터 (units, thresholds, `HISTORY_K=20`, `CORR_JUMP` 등) |
+| `llmshift/agent.py` | rule/LLM 에이전트: 감지 + 앵커 보정 + hysteresis/가드레일 + parse_json |
+| `llmshift/prompt.py` | LLM 프롬프트 (cause gate, END-OF-LIFE≠shift, 보정 산식) |
+| `injection/inject.py` / `build_corrupted.py` | FaultSpec 주입, 감지기-정렬 난이도 캘리브레이션 |
+| `baselines/cusum.py` | threshold + per-channel CUSUM 베이스라인 |
+| `baselines/grid_experiment.py` | 시나리오 그리드 × 감지기(CUSUM/PCA/rule) 벤치마크 러너 |
+| `core/evaluate.py` | 결정 F1 / shift 감지 / rul_correction RMSE·MAE |
+| `llmshift/run_experiment.py`, `snr_experiment.py` | rule-vs-LLM 실험, σ-vs-cons 난이도 실험 |
 
 ## 현재 결과 요약 (Qwen2.5-32B-AWQ, 5 samples)
 

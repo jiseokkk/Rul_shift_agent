@@ -15,7 +15,7 @@ import glob
 import json
 import os
 
-import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.core.config as C
 
 SCENARIOS = ["no_shift", "adverse", "favorable", "natural"]
 

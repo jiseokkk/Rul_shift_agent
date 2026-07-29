@@ -14,8 +14,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import han.Rul_shift_agent.config as C
-import han.Rul_shift_agent.inject as I
+import han.Rul_shift_agent.core.config as C
+import han.Rul_shift_agent.injection.inject as I
 
 SRC = "/home/iai4/Desktop/han/Rul_shift_agent/dataset/data_set/N-CMAPSS_DS02-006.h5"
 CORR = ("/home/iai4/Desktop/han/Rul_shift_agent/dataset/corrupted_NCMAPSS/"

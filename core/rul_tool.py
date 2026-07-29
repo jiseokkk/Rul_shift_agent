@@ -15,7 +15,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-import han.Rul_shift_agent.config as C
+import han.Rul_shift_agent.core.config as C
 
 SCALER_PATH = C.OUT_DIR + "/scaler.npz"
 MODEL_PATH = C.OUT_DIR + "/rul_lstm.pt"
