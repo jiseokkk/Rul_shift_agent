@@ -1,647 +1,367 @@
-# N-CMAPSS Shift Detection 실험 설계 및 최소 베이스라인
+# N-CMAPSS Sensor Shift Detection 베이스라인 계획 (0729 v3 확정)
 
-## 1. 연구 목적
+> **개정 이력**: v1(MC-TIRE/ADWIN/KL-CPD 로드맵) → v2(CUSUM/PCA ×Raw·Regime + OC-MLP +
+> GDN + RIV/RIF pilot) → **v3(본 문서)**: 선정 기준에 "공개 구현 존재"를 추가하고
+> ContextMMD·D3-Regime을 편입, RIV/RIF·USAD/TranAD 제외, Raw 변형은 ablation 전용으로
+> 격리, fusion baseline은 현행 스코프에서 제외(설계만 §16.3에 보존).
+> 데이터셋 구현 설계와 확정 결정 로그는 §17–18에 유지하며, 충돌 시 §18.3 결정이 우선한다.
 
-본 실험의 목적은 N-CMAPSS 기반 RUL 예측 환경에서 센서 bias 및 drift로 인해 발생하는 입력 분포 변화를 탐지하고, 기존 shift detection 방법들이 어떤 유형의 변화를 잘 탐지하거나 놓치는지 분석하는 것이다.
+## 1. 연구 방향 정의
 
-N-CMAPSS는 본래 이상탐지 데이터셋이 아니라 RUL 예측 및 열화 분석용 run-to-failure 데이터셋이다. 따라서 본 연구에서는 탐지 task를 다음과 같이 재정의한다.
+본 연구는 일반 anomaly detection이나 범용 domain-shift detection 자체가 목적이 아니다.
 
-- **정상 데이터:** 센서 오염이 없는 원본 N-CMAPSS 데이터
-  - 정상적인 비행조건 변화 포함
-  - 수명에 따른 자연스러운 열화 포함
-  - RUL 감소 포함
-- **이상 데이터:** 원본 N-CMAPSS에 인위적으로 bias, drift 등의 센서 오염을 주입한 데이터
+> **N-CMAPSS의 가변 운항조건과 자연 열화가 존재하는 환경에서, 고정된 RUL 예측 모델의
+> 신뢰성을 훼손할 수 있는 비정상 센서 shift를 탐지하고, 서로 다른 탐지 도구가 생성한
+> 증거를 LLM Agent가 통합하여 최종 판단하는 연구**
 
-즉, 엔진 열화 자체가 아니라 **RUL 모델 입력의 무결성을 훼손하는 센서 shift**를 탐지 대상으로 한다.
+연구는 세 단계로 구성한다.
+
+1. **Sensor Shift Detection** — 운항조건과 자연 열화로 설명되지 않는 센서 변화가
+   발생했는지 판단한다.
+2. **RUL Harmfulness Assessment** — 탐지된 shift가 고정 RUL 모델의 예측 오차 또는
+   정비 의사결정을 실제로 위협하는지 판단한다 (채점 기준은 §18.3 결정 9).
+3. **Decision** — 증거를 통합하여 보정·정비 결정을 생성한다 (llmshift 에이전트 축).
+
+## 2. Shift Detection 실험의 라벨 정의
+
+Detection 벤치마크(Table A)에서는 다음 질문만 평가한다: **센서 shift가 발생했는가?**
+
+\[
+y_t^{\mathrm{shift}}=\begin{cases}0,&t<t_{\mathrm{onset}}\\1,&t\ge t_{\mathrm{onset}}\end{cases}
+\]
+
+| 상황 | 라벨 |
+|---|---:|
+| Flight Class 변화, 상승·순항·하강 전환, 정상 운항조건 변화 | 0 |
+| 자연적인 엔진 열화 | 0 |
+| 모든 주입 fault (bias/ramp/gain/noise/stuck/lag/coordinated) | 1 |
+
+RUL 영향의 크고 작음은 이 단계에서 구분하지 않는다. **harmful/benign 구분(§18.3
+결정 9의 |ΔRUL| 기준·ignore 셀)은 Harmfulness Assessment 단계에서만 적용한다** —
+두 채점은 상충이 아니라 단계 분담이다.
+
+## 3. N-CMAPSS 문제 구조
+
+\[
+X_t = g(W_t, H_t) + \epsilon_t,\qquad W_t=[alt_t,\ Mach_t,\ TRA_t,\ T2_t]
+\]
+
+- \(W_t\): 운항조건, \(H_t\): 건강상태·자연 열화, \(\epsilon_t\): 정상 노이즈
+- shift \(\delta_t\) 주입 시 \(\tilde X_t = g(W_t,H_t)+\delta_t+\epsilon_t\)
+
+Raw sensor에 detector를 직접 적용하면 Flight Class·고도·Mach·출력·비행 phase·자연
+열화 등 정상 변화를 shift로 오인한다 (raw-KL 실패의 근본 원인 — §12의 ablation이
+이를 실증한다). 따라서 탐지 대상은:
+
+> **운항조건과 자연 열화로 설명되지 않는 센서 분포·관계·시간 패턴의 변화**
+
+기본 구조는 운항조건으로 설명되는 변화를 먼저 제거하고 남은 residual 위에서
+탐지하는 것이다:
+
+\[
+\hat X_t=f_{\mathrm{OC}}(W_t),\qquad R_t=X_t-\hat X_t
+\]
+
+## 4. Baseline 선정 기준
+
+1. N-CMAPSS 운항조건 문제를 처리할 수 있는가
+2. 서로 다른 shift 탐지 원리를 대표하는가
+3. **공개 구현이 있거나 현실적으로 재현 가능한가**
+4. LLM Agent가 통합할 서로 다른 종류의 증거를 제공하는가
+
+같은 계열 모델을 여럿 넣기보다 원리별 대표 하나씩: 순차 통계 / 다변량 통계 /
+운항조건→센서 관계 위반 / 조건부 분포 변화 / 학습 기반 domain shift /
+temporal·sensor relation anomaly.
+
+## 5. 최종 Core Baseline
+
+| 우선순위 | 방법 | 탐지 원리 | 구현 |
+|---:|---|---|---|
+| 1 | **OC-MLP Residual** | 운항조건→센서 관계 위반 | 단순 구조, 직접 재현 |
+| 2 | **ContextMMD** | 조건부 분포 변화 \(P(X\mid W)\) | SeldonIO/alibi-detect |
+| 3 | **D3-Regime** | 학습 기반 domain shift (classifier AUC) | ogozuacik/d3 공식 레포 |
+| 4 | **GDN-Regime** | 센서 관계·시간 패턴 이상 | d-ailin/GDN 공식 레포 |
+| 5 | **CUSUM-Regime** | 순차 평균 변화 | 직접 구현 (기존) |
+| 6 | **PCA-T²/SPE-Regime** | 다변량 선형 공간 변화 | scikit-learn (기존) |
+
+- 본 표의 모든 detector는 regime(운항조건 처리) 버전이 기본이다. Raw 변형은
+  baseline이 아니라 **conditioning ablation 전용**(§12).
+- 실험 우선순위: **1순위 = 본 표(Table A) 개별 detector 벤치마크**, 2순위 = §12
+  ablation(비용 낮음, 1순위와 병행 가능), 이연 = §16.3 fusion.
+
+## 6. OC-MLP Residual
+
+**탐지 질문**: 현재 센서값이 주어진 운항조건으로 정상적으로 설명되는가?
+
+```text
+[alt, Mach, TRA, T2] → MLP → 14개 정상 센서값 예측
+→ 실제 − 예측 = sensor-wise residual → cycle score
+```
+
+- **강점**: step/ramp bias, gain, 단일·다중 센서 shift, 센서별 localization.
+  현행 regime_z(polynomial)의 비선형 확장이라 기존 증거와 직접 연결.
+- **약점**: lag, noise-only, 정상 관계 유지 coordinated shift, 운항조건으로
+  설명 안 되는 자연 열화.
+- **학습 프로토콜(필수)**: clean train unit으로만 학습 → 모델 고정 → clean
+  validation unit(u20)에서 threshold → injection test에 그대로 적용.
+  injection 데이터를 학습에 넣으면 shift까지 정상 관계로 흡수된다.
+- **명명·인용 방침**: "OC-MLP"는 특정 논문이 아니라 본 연구의 명명 — 표준 원리
+  (analytical redundancy / model-based sensor validation, 예: NASA Kobayashi–Simon
+  계열의 터보팬 센서 FDI; C-MAPSS regime normalization 관행)의 최소 MLP 구현이다.
+  논문에는 "our instantiation of the standard operating-condition regression
+  residual baseline (denoted OC-MLP)"로 표기하고 원리의 계보 문헌을 인용한다.
+  CUSUM/PCA와 같은 "교과서 원리의 자체 구현" 범주이므로 발표된 방법의 재현으로
+  서술하지 않는다.
+
+## 7. ContextMMD
+
+**탐지 질문**: 운항조건 변화를 허용했을 때도 센서의 조건부 분포가 달라졌는가?
+
+\[
+H_0:\ P_{\mathrm{ref}}(X\mid W)=P_{\mathrm{recent}}(X\mid W)
+\]
+
+- 문제 정의(§3)와 가장 직접적으로 일치하는 detector. raw 분포 검정(KL/MMD)이
+  실패했던 원인을 조건화로 정면 해결한다.
+- **강점**: additive bias, gain, noise 증가(분포 형상), 다중 센서·coordinated
+  distribution shift. 고정 reference와 비교하므로 지속 shift에 적응하지 않는다.
+- **약점**: lag 등 시간 순서 변화(→ GDN 담당), 센서 localization 약함.
+- **구현 규정**:
+  - `alibi_detect.cd.ContextMMDDrift` 사용.
+  - **표본 단위 = timestep** (cycle 아님): 최근 buffer 9–15 cycle × 50 timestep
+    = 450–750 표본, context = timestep별 \(W_t\). cycle을 표본으로 쓰면 n≈10이라
+    검정력이 없다.
+  - **reference set은 train unit의 전체 수명 clean 데이터에서 구성** (§18.3
+    결정 15) — 초기 healthy만 쓰면 수명 후반 clean이 전부 drift로 잡힌다.
+  - buffer 길이만큼의 고유 latency가 있으므로 latency 보고 시 buffer 크기를 병기.
+
+## 8. D3-Regime
+
+**탐지 질문**: 학습된 domain classifier가 reference 구간과 최근 구간을 구분할 수
+있는가? (구분 가능 = 분포가 다름)
+
+```text
+Reference windows → Domain 0 / Recent windows → Domain 1
+→ classifier 학습 → held-out AUC > threshold ⇒ shift
+```
+
+- **강점**: 평균·분산·비선형 domain 차이, 다중 센서 shift. ContextMMD와 다른
+  원리(학습 기반)의 분포 변화 증거 제공.
+- **약점**: 작은 recent window에서 overfit, temporal 순서 미사용(lag 약함).
+- **구현 규정**:
+  - 공식 레포 `ogozuacik/d3-discriminative-drift-detector-concept-drift` 기반
+    (구조가 단순해 필요시 LR-AUC로 직접 재현 가능).
+  - 입력 = OC residual cycle feature: cycle당 50×14 residual → 센서별
+    mean/std/slope/min/max = 70차원.
+  - classifier 학습은 **결정 케이던스(3 cycle)당 1회**로 묶어 비용 제한.
+  - reference domain도 전체 수명 clean에서 구성 (결정 15).
+  - threshold: u20 clean-vs-clean AUC 분포의 분위수로 캘리브레이션 (결정 1과 동일
+    원칙).
+
+## 9. GDN-Regime
+
+**탐지 질문**: 운항조건 효과 제거 후에도 센서 간 관계와 시간적 예측 구조가 깨졌는가?
+
+\[
+R_{t-L:t-1}\rightarrow\hat R_t,\qquad A_t=|R_t-\hat R_t|
+\]
+
+### 9.1 입력과 cycle 경계
+
+- 입력 = OC residual (cycle당 50×14). **비행 간 시계열을 연결하지 않는다** — cycle
+  내부에서만 temporal window 생성, cycle 종료 시 history reset. (연결 시계열이
+  비행 간 자연 변동으로 fault를 덮는 것은 KL-CPD 실측으로 확인, §18.3 결정 10.)
+- ⚠ canonical 50-step 압축에서 timestep 하나 ≈ 실제 수십 초 — **lag 주입 τ가
+  downsampling 후에도 보이는 스케일인지 사전 확인** (아니면 GDN의 lag 강점을
+  평가할 수 없는 데이터가 된다).
+
+### 9.2 지속 bias와 latch
+
+과거값으로 현재를 예측하므로 지속 bias에는 적응해 score가 감소할 수 있다.
+→ 공통 hysteresis 위에 event latch(한 번 확정된 shift 상태 유지)를 둔다.
+
+### 9.3 강점/약점
+
+- **강점**: lag, stuck, noise 증가, intermittent, 센서 관계 붕괴, 비선형
+  multivariate 패턴 — 분포 기반 detector가 놓치는 temporal 축 담당.
+- **약점**: 지속 step bias 적응(→latch), slow ramp 지연, 관계 유지 coordinated
+  shift.
+- 구현: 공식 `d-ailin/GDN` (PyTorch). 레포 환경이 오래되어 현재 PyTorch/PyG에
+  맞춰 모델 부분 이식 권장.
+
+## 10. CUSUM-Regime
+
+**탐지 질문**: 특정 센서 residual의 작은 평균 변화가 지속 누적되는가?
+
+\[
+S_t^+=\max(0,S_{t-1}^++z_t-k),\qquad S_t^-=\max(0,S_{t-1}^--z_t-k)
+\]
+
+- **강점**: step bias, mean shift, slow ramp, 지속적 단일 센서 변화. 복잡한 모델의
+  필요성을 검증하는 최소 sanity-check 기준.
+- **약점**: noise-only, lag, stuck, 비선형 다중 센서 변화, 관계 유지 coordinated.
+- 구현: NumPy 직접 구현 (기존 `baselines/cusum.py`), 입력만 regime 신호로 교체
+  (§18.4의 CUSUM-regime).
+- **문헌 계보 (인용 앵커)**: Page (1954, Biometrika) — 순차 변화점 탐지의 원조;
+  Moustakides (1986, Ann. Stat.) — 지속 평균 shift에 대한 minimax 최적성 증명;
+  Basseville & Nikiforov (1993, *Detection of Abrupt Changes*) — 정본 교과서;
+  Gama et al. (2014, ACM Comput. Surv.) — concept drift 서베이에서 표준 drift
+  detector로 등재. SPC 계보와 ML drift 계보 양쪽에서 baseline 자격 공인.
+
+## 11. PCA-T²/SPE-Regime
+
+**탐지 질문**: 현재 residual이 정상 다변량 선형 공간에서 벗어났는가?
+
+- \(T^2=t^\top\Lambda^{-1}t\): 정상 주성분 공간 **내부**의 과도한 이동
+  (관계 유지 coordinated shift 담당).
+- \(SPE=\|R-PP^\top R\|^2\): 정상 부분공간으로 설명되지 않는 **밖**의 변화
+  (관계 붕괴, 단일 센서 bias 담당).
+- T²와 SPE는 별도 모델이 아니라 하나의 PCA에서 나오는 상호보완 통계량.
+- **약점**: 비선형 관계, lag, 아주 작은 drift.
+- 구현: scikit-learn PCA + 직접 계산 (기존 구현 유지).
+- **문헌 계보 (인용 앵커)**: Hotelling (1947) — 다변량 품질관리의 T²;
+  Jackson & Mudholkar (1979, Technometrics) — PCA 잔차 SPE/Q 통계량 정식화;
+  Kresta–MacGregor–Marlin (1991) — 다변량 공정 모니터링(MSPC) 확립;
+  Qin (2003, J. Chemometrics) / Chiang–Russell–Braatz (2001) — 표준 서베이·교과서.
+  Tennessee Eastman 벤치마크의 수십 년 표준 fault-detection baseline이 T²+SPE 조합.
+
+## 12. Conditioning Ablation (Raw vs Regime)
+
+운항조건 처리의 효과를 실증하는 축. **본 비교표(Table A)와 분리해 보고한다** —
+Raw 변형은 baseline이 아니라 conditioning 필요성의 증거물이다.
+
+| 비교쌍 | 확인 내용 |
+|---|---|
+| CUSUM-Raw ↔ CUSUM-Regime | 기존 구현, 비용 0 |
+| PCA-T²/SPE-Raw ↔ -Regime | 기존 구현, 비용 0 |
+| **MMD-Raw → MMD-Regime → ContextMMD** | raw 분포검정 실패 → residual화 효과 → 직접 조건화 효과의 3단 분해. "KL이 안 됐던 이유는 conditioning 부재"를 실증하는 핵심 ablation |
+| D3-Raw ↔ D3-Regime | 학습 기반 detector도 raw에서는 Flight Class를 학습함을 실증 |
+| GDN-Raw ↔ GDN-Regime | deep 계열에서의 conditioning 효과 |
+
+기대 결과: Regime 계열에서 natural unit(u14/15) FPR 감소 + injection recall 유지.
+(근거가 되는 기존 실측: raw 기반 CUSUM/PCA는 u14에서 FA 22–25회로 사용 불가,
+regime 신호는 benign ~0.5–1.2σ vs fault ~15–62σ.)
+
+## 13. 제외 항목과 사유
+
+| 방법 | 사유 |
+|---|---|
+| RIV/RIF (MI 기반 model drift) | N-CMAPSS 적합성은 높으나 공개 코드 부재 + MI 추정 재현 비용. 그 역할(입출력 관계 변화)은 OC-MLP·D3·ContextMMD가 분담 |
+| USAD / TranAD | **ContextMMD·D3가 지속 off-manifold 분포 변화를 커버**하므로 비선형 reconstruction 슬롯이 불필요해짐 (단순 "GDN과 중복"이 아님 — forecasting과 reconstruction은 다른 원리이나, 고정 reference 비교 계열이 그 역할을 대체). TranAD는 50-step cycle에 과한 복잡도 |
+| KL-CPD / MC-TIRE | 연결 시계열에서 비행 간 자연 변동이 fault 신호를 덮음 — 실측 확인 (§18.3 결정 10) |
+| ADWIN / Page-Hinkley | CUSUM과 역할 중복 (v1에서 이월된 후보, 미채택) |
+| Rule 게이트 | 고정 게이트가 공통 FA 캘리브레이션 밖 — detection 벤치마크 제외 (§18.3 결정 6) |
+| **Fusion baseline (Max/Weighted/XGBoost)** | **현행 스코프 제외** (§16.3, §18.3 결정 14) |
+
+## 14. 공통 평가 프로토콜
+
+### 14.1 데이터 분할
+
+```text
+Train:      Units 2, 5, 10, 16, 18 (clean)
+Validation: Unit 20 (clean, threshold 캘리브레이션 전용)
+Test:       Units 11, 14, 15 (clean + corrupted)
+```
+
+- OC 모델은 Stage 1에서 clean train unit으로 학습 후 **고정** — 모든 split에 동일
+  모델로 residual 생성.
+- detector의 reference/학습 데이터는 **전체 수명** clean residual 포함 (결정 15).
+
+### 14.2 Threshold와 케이던스
+
+- 캘리브레이션: 전 detector 공통, u20 clean에서 FA ≤ 1회/100 cycles의 분위수
+  (§18.3 결정 1). Test label로 threshold 선택 금지.
+- 케이던스: cycle별 score → 3 cycle마다 평가 → 2회 연속 초과 → confirmed
+  (raw / hysteresis 병행 보고). 감지 크레딧은 off→on 전이 + SAT 표기
+  (§18.3 결정 7).
+- **모든 detector는 결정 포인트마다 정규화 score를 공통 스키마로 저장한다**
+  (§18.3 결정 14) — 이연된 fusion과 LLM evidence 확장을 무비용으로 만드는 조건.
+
+### 14.3 평가 지표
+
+- Event-level Precision / Recall / F1, AUPRC
+- Detection latency (ContextMMD는 buffer 크기 병기, 느린 ramp는 §18.5-7 이중 보고)
+- FPR, FA/100 cycles, **Flight Class별 clean FPR**
+- **수명 전반부 FPR / 수명 후반부 FPR** (자연 열화 confound 검증)
+- Shift 유형별 F1, Sensor localization accuracy (지원 detector만: CUSUM/OC-MLP/GDN)
+
+## 15. Shift 유형별 예상 강자 (blind spot 매트릭스)
+
+| Shift 유형 | 유력 detector |
+|---|---|
+| Step bias | CUSUM, OC-MLP, ContextMMD |
+| Slow ramp | CUSUM, OC-MLP |
+| Gain | OC-MLP, ContextMMD, PCA |
+| Noise 증가 | ContextMMD, D3, GDN |
+| Stuck | GDN, D3, PCA-SPE |
+| Lag | GDN (단독 — §9.1 τ 확인 필수) |
+| Intermittent | GDN, D3 |
+| Coordinated (관계 유지) | PCA-T², ContextMMD, D3 |
+| 관계 붕괴 | GDN, PCA-SPE |
+
+주입 fault mode 전부에 담당 detector가 존재하며(blind spot 없는 설계), 동시에
+**어떤 단일 detector도 전 유형을 커버하지 못한다** — 이 매트릭스가 "다중 증거
+통합이 필요하다"는 문제의식의 실증 근거가 된다.
+
+## 16. 연구 질문과 주장 구조
+
+### 16.1 연구 질문
+
+> 기존 detector가 개별 변화 신호를 탐지하더라도, 정상 운항조건 변화·자연 열화와
+> RUL 입력을 훼손하는 sensor shift를 구분하는 데 한계가 있는가?
+
+> Tier-1 신호(regime_z, consistency_z, RUL history)를 입력으로 받는 LLM Agent
+> (시스템)는 개별 detector 대비 동등 이상으로 안정적인 shift 판별 성능을 보이는가?
+
+> 탐지하기 어려운 낮은 magnitude·관계 보존형 shift가 고정 RUL 모델에 큰 영향을
+> 주는 dangerous silent shift를 형성하는가?
+
+### 16.2 주장 구조
+
+**시스템 대 시스템 성능 주장**이다 — "통합 자체가 원인"이라는 인과 주장이 아니다
+(§18.3 결정 12·14). 원인 귀속은 consistency ablation(제거 시 adverse F1→0)과
+§18.4 통제 실험(CUSUM/PCA-regime)이 담당한다. detection에서 우위가 제한적일
+경우의 후퇴선은 detector가 원리적으로 못 하는 축: 방향(adverse/favorable) 판정,
+benign/harmful 원인 구분, RUL 보정, 정비 결정, 애매구간 recall·latency
+(기존 실측: rule 0.64→LLM 1.00, latency 13→1).
+
+### 16.3 Fusion baseline (현행 스코프 제외, 설계 보존)
+
+추후 필요시(리뷰어 요구 등) 실행할 설계: 모든 detector score \(E_t\)를 공통
+입력으로 Best-individual / Max-OR / Weighted / XGBoost fusion vs LLM. 실행 조건:
+① §14.2의 score 로깅이 있으면 저장된 score 위에서 재실행 없이 가능, ② 학습형
+fusion(Weighted/XGBoost)의 가중치는 개발용 시나리오에서만 학습(dev/final 분리),
+③ LLM 입력도 detector score 기반으로 재설계(§18.3 결정 17의 이연 항목)하여 동일
+evidence 조건 충족, ④ LLM-비교는 결정 8의 21-시리즈 부분집합 원칙 동일 적용.
 
 ---
 
-## 2. 1차 확정 베이스라인
-
-초기 실험에서는 서로 다른 탐지 원리를 대표하는 세 가지 모델만 우선 적용한다.
-
-| 분류 | 모델 | 역할 | 선정 이유 |
-|---|---|---|---|
-| 통계적 순차 탐지 | CUSUM | 단변량 평균 변화 탐지 | 센서 bias와 drift에 대한 가장 기본적인 기준점 |
-| 다변량 통계 | PCA-SPE / Hotelling's T² | 센서 관계 붕괴 및 정상 공간 이탈 탐지 | 선형 다변량 센서 관계를 평가하는 대표적인 고전 기준점 |
-| Deep Change-Point Detection | MC-TIRE | 다채널 representation 변화 및 onset 탐지 | 학습 기반 다변량 shift detection에 대한 비교군 |
-
-### 최소 비교 구성
-
-```text
-1. CUSUM
-2. PCA-SPE / T²
-3. MC-TIRE
-4. Rule-based 제안 방법
-5. LLM-based 제안 방법
-```
-
----
-
-## 3. 베이스라인별 평가 목적
-
-### 3.1 CUSUM
-
-CUSUM은 각 센서의 평균값이 정상 기준에서 지속적으로 벗어나는지를 누적 통계량으로 탐지한다.
-
-#### 잘 탐지할 것으로 예상되는 조건
-
-- 단일 센서 step bias
-- 지속적인 offset
-- 한 방향으로 누적되는 drift
-- 비교적 큰 평균 변화
-
-#### 취약할 것으로 예상되는 조건
-
-- 평균 변화는 작지만 센서 간 관계가 깨지는 경우
-- 여러 센서가 서로 보상하며 움직이는 경우
-- Flight Class 변화와 같은 정상 이용조건 변화
-- 짧게 반복되는 intermittent bias
-- 매우 느린 gradual drift
-
-CUSUM은 가장 기본적인 sanity-check baseline이며, 단순 통계적 방법으로도 해결되는 문제인지 확인하는 역할을 한다.
-
----
-
-### 3.2 PCA-SPE / Hotelling's T²
-
-PCA 기반 공정 모니터링에서는 SPE와 T²를 함께 사용한다.
-
-- **SPE(Q-statistic):** 정상 PCA 부분공간으로 설명되지 않는 잔차 변화
-- **Hotelling's T²:** 정상 부분공간 내부에서 정상 범위를 벗어난 이동
-
-#### 잘 탐지할 것으로 예상되는 조건
-
-- 일부 센서만 bias된 경우
-- 센서 간 correlation 붕괴
-- 정상 manifold 밖으로 벗어나는 변화
-- 다변량 센서 조합의 불일치
-
-#### 취약할 것으로 예상되는 조건
-
-- PCA 정상 부분공간 방향으로 발생하는 shift
-- 여러 센서가 정상 관계를 유지하며 함께 이동하는 경우
-- 비선형 센서 관계
-- 새로운 Flight Class로 인한 정상 이용점 영역 이동
-
-PCA-SPE/T²는 현재 연구의 `consistency_z`와 가장 직접적으로 비교되는 고전적 다변량 기준점이다.
-
----
-
-### 3.3 MC-TIRE
-
-MC-TIRE는 다채널 시계열의 temporal 및 cross-channel representation 변화를 학습하여 change-point score를 출력하는 딥러닝 기반 비지도 CPD 모델이다.
-
-#### 잘 탐지할 것으로 예상되는 조건
-
-- 다채널 평균 변화
-- 분산 변화
-- temporal pattern 변화
-- cross-channel representation 변화
-- 명확한 shift onset
-
-#### 취약할 것으로 예상되는 조건
-
-- 매우 느린 gradual drift의 정확한 시작점
-- 센서 fault와 정상 Flight Class 변화를 구분하는 문제
-- 탐지된 변화가 RUL을 실제로 저해하는지 판단하는 문제
-- adverse/favorable 방향 판단
-
-MC-TIRE는 shift onset 자체를 탐지하는 딥러닝 비교군으로 사용한다.
-
----
-
-## 4. 1차 Bias Injection 데이터셋 구성
-
-초기 데이터셋은 탐지 모델별 실패 특성을 확인할 수 있도록 네 가지 핵심 시나리오로 구성한다.
-
-### 4.1 Case 0: Clean Control
-
-```text
-No-shift control:
-- Unit 11 clean
-
-Natural-shift control:
-- Unit 14 clean
-- Unit 15 clean
-```
-
-#### 목적
-
-- 정상 데이터에서의 false alarm 확인
-- 학습하지 않은 Flight Class 변화에 대한 오탐 확인
-- benign operational shift와 harmful sensor shift 구분 가능성 평가
-
----
-
-### 4.2 Case 1: 단일 센서 Bias
-
-```text
-대상 센서: T48
-Profile: step / ramp
-Direction: negative / positive
-Magnitude: 0.5σ / 1.0σ / 2.0σ
-```
-
-#### 목적
-
-- CUSUM이 기본적인 평균 shift를 정상적으로 탐지하는지 확인
-- PCA와 MC-TIRE의 detection latency 비교
-- 전체 pipeline이 정상 동작하는지 확인하는 sanity test
-
----
-
-### 4.3 Case 2: 다채널 관계 붕괴 Bias
-
-예시:
-
-```text
-대상 센서:
-- T24
-- T30
-- T48
-- T50
-
-각 센서에 서로 다른 크기 또는 방향의 bias 주입
-```
-
-#### 목적
-
-- 센서 간 정상 correlation이 깨지는 상황 생성
-- PCA-SPE의 강점 확인
-- MC-TIRE가 cross-channel 변화를 탐지하는지 확인
-- 향후 GDN을 추가할 필요성 판단
-
----
-
-### 4.4 Case 3: 관계 보존형 Coordinated Bias
-
-여러 센서를 정상 상관구조와 유사한 방향으로 함께 이동시킨다.
-
-예를 들어 학습 데이터에서 구한 PCA loading 방향을 사용할 수 있다.
-
-x'_t = x_t + α·v_k
-
-- x_t: 원본 센서 벡터
-- v_k: PCA loading 방향
-- α: shift 크기
-
-#### 목적
-
-- 개별 센서 평균은 변하지만 센서 관계는 일정 부분 유지되는 shift 생성
-- PCA-SPE가 정상 부분공간 내부 shift를 놓치는지 확인
-- PCA-T²와 CUSUM의 반응 비교
-- RUL 모델에는 영향을 주지만 detector가 놓치는 silent harmful shift 탐색
-
----
-
-## 5. 초기 실험 파라미터
-
-### 5.1 Magnitude
-
-```text
-0.5σ
-1.0σ
-2.0σ
-```
-
-2σ만 사용하면 모든 detector가 쉽게 탐지할 가능성이 있으므로, 0.5σ와 1σ를 함께 포함한다.
-
-### 5.2 Temporal Profile
-
-```text
-Step
-Ramp-15 cycles
-```
-
-### 5.3 Injection Onset
-
-```text
-전체 수명의 45% 지점
-```
-
-### 5.4 Direction
-
-```text
-Negative bias:
-- RUL 과대추정 방향의 adverse shift
-
-Positive bias:
-- RUL 과소추정 방향의 favorable shift
-```
-
-### 5.5 초기 조합
-
-| Scope | Profile | Magnitude | Direction |
-|---|---|---|---|
-| Single T48 | Step | 0.5 / 1.0 / 2.0σ | ± |
-| Single T48 | Ramp-15 | 0.5 / 1.0 / 2.0σ | ± |
-| Temp4 inconsistent | Ramp-15 | 0.5 / 1.0 / 2.0σ | ± |
-| Coordinated | Ramp-15 | 0.5 / 1.0 / 2.0σ | ± |
-
-초기 결과에서 모델별 성능이 갈리는 magnitude 구간을 찾은 뒤, 해당 구간을 세분화한다.
-
-예:
-
-```text
-0.5σ에서는 대부분 실패
-1.0σ에서는 일부 성공
-2.0σ에서는 모두 성공
-
-→ 최종 실험:
-0.5 / 0.65 / 0.8 / 1.0σ
-```
-
----
-
-## 6. 데이터셋에 저장해야 할 메타데이터
-
-각 injection scenario에 대해 다음 정보를 저장한다.
-
-```text
-unit
-flight_class
-scenario_id
-fault_channels
-fault_scope
-fault_profile
-injection_onset
-ramp_length
-direction
-raw_bias
-sigma_normalized_bias
-clean_rul_prediction
-corrupted_rul_prediction
-rul_prediction_difference
-rul_absolute_error_change
-consistency_score
-regime_score
-```
-
-특히 다음 두 축은 분리해야 한다.
-
-### Injection Magnitude
-
-```text
-센서 값이 정상 데이터에서 얼마나 변했는가?
-```
-
-### RUL Impact
-
-```text
-센서 변화로 인해 RUL 예측이 얼마나 왜곡되었는가?
-```
-
-같은 1σ shift라도 센서와 주입 방향에 따라 RUL 영향이 크게 다를 수 있다.
-
-최종적으로 중요한 시나리오는 다음과 같다.
-
-```text
-탐지는 쉽지만 RUL 영향은 없는 shift
-탐지는 어렵지만 RUL 영향은 큰 shift
-```
-
-두 번째 유형은 **dangerous silent shift**로 정의할 수 있다.
-
----
-
-## 7. 공정한 학습 및 평가 프로토콜
-
-### 7.1 Training
-
-```text
-Clean training units:
-- Unit 2
-- Unit 5
-- Unit 10
-- Unit 16
-- Unit 18
-```
-
-모든 모델은 센서 오염이 없는 clean N-CMAPSS 데이터만 사용한다.
-
-### 7.2 Validation 및 Threshold Calibration
-
-```text
-Validation:
-- Unit 20 clean
-```
-
-모든 모델은 동일한 clean false-alarm 조건을 만족하도록 threshold를 설정한다.
-
-예:
-
-```text
-False alarm rate = 0%
-또는
-False alarm ≤ 1회 / 100 cycles
-```
-
-Test label을 이용해 threshold를 최적화하면 안 된다.
-
-### 7.3 Test
-
-```text
-Unit 11:
-- clean
-- corrupted
-
-Unit 14:
-- clean natural shift
-- corrupted
-
-Unit 15:
-- clean natural shift
-- corrupted
-```
-
-가능하면 Unit 14와 Unit 15에도 동일한 fault injection을 적용하여 unit과 scenario가 결합되지 않도록 한다.
-
-### 7.4 공통 후처리
-
-모든 detector에 동일한 hysteresis를 적용한다.
-
-```text
-Detector score > threshold
-        ↓
-2개 decision point 연속 초과
-        ↓
-Confirmed shift
-```
-
-결과는 두 가지 형태로 모두 보고한다.
-
-```text
-Raw detection
-Detection + common hysteresis
-```
-
----
-
-## 8. 평가 지표
-
-### 8.1 Shift Detection Performance
-
-```text
-Precision
-Recall
-F1-score
-Detection latency
-False positive rate
-False alarms per 100 cycles
-Event-level detection rate
-```
-
-### 8.2 Harmful Shift Detection
-
-양성과 음성을 다음과 같이 정의한다.
-
-```text
-Positive:
-- adverse sensor shift
-- favorable sensor shift
-
-Negative:
-- no shift
-- natural Flight Class shift
-```
-
-이는 단순한 분포 변화 탐지가 아니라, RUL 입력을 훼손하는 harmful shift를 탐지하는 평가이다.
-
-### 8.3 Generic Shift Detection
-
-```text
-Positive:
-- adverse shift
-- favorable shift
-- natural shift
-
-Negative:
-- no shift
-```
-
-MC-TIRE와 같은 일반 change-point detector는 이 기준에서도 별도로 평가한다.
-
-### 8.4 RUL Impact
-
-```text
-Raw RUL RMSE
-Corrected RUL RMSE
-RUL MAE
-RUL prediction difference
-Maintenance decision FNR/FPR
-```
-
-Shift detection 결과와 RUL correction 결과는 분리해서 평가한다.
-
----
-
-## 9. 이후 추가할 베이스라인
-
-### 9.1 1순위 추가: GDN
-
-#### 역할
-
-비선형 센서 관계를 학습하는 anomaly detector가 선형 PCA 및 `consistency_z`보다 우수한지 평가한다.
-
-#### 추가 목적
-
-```text
-PCA:
-선형 센서 관계
-
-GDN:
-비선형 graph 기반 센서 관계
-```
-
-#### 권장 입력 버전
-
-```text
-GDN-Sensor:
-- 14개 측정 센서
-
-GDN-Context:
-- 14개 센서 + 4개 이용조건
-
-또는
-
-GDN-Regime:
-- 이용조건 효과가 제거된 regime residual
-```
-
-GDN은 point-wise anomaly detector이므로 공통 threshold 및 hysteresis를 적용해 shift detector로 변환한다.
-
----
-
-### 9.2 2순위 추가: ADWIN
-
-#### 역할
-
-adaptive-window 기반 streaming drift detector가 고정 누적 방식인 CUSUM보다 gradual drift를 잘 탐지하는지 평가한다.
-
-#### 추가 이유
-
-- 구현 비용이 낮음
-- gradual drift 비교에 적합
-- streaming drift 분야의 대표적인 기준점
-
----
-
-### 9.3 3순위 추가: KL-CPD
-
-#### 역할
-
-MC-TIRE 외에 deep kernel 기반 change-point detection에서도 동일한 결과가 나타나는지 확인한다.
-
-#### 추가 시점
-
-- 최종 논문에서 Deep CPD 계열을 두 개 이상 비교할 필요가 있을 때
-- MC-TIRE에 좋았던 결과가 아니라는 점을 보여줄 때
-
----
-
-### 9.4 4순위 추가: TranAD
-
-#### 역할
-
-Transformer 기반 temporal anomaly detector가 시간적 패턴 변화에 얼마나 강한지 평가한다.
-
-#### 적합한 추가 시나리오
-
-```text
-Intermittent fault
-Lag
-Stuck sensor
-Noise injection
-Temporal dynamics corruption
-```
-
-단순 step bias와 ramp만 사용하는 초기 단계에서는 우선순위가 낮다.
-
----
-
-### 9.5 선택 추가: Page-Hinkley
-
-CUSUM 및 ADWIN과 역할이 일부 중복되므로 필수는 아니다.
-
-다음 경우 추가한다.
-
-- 온라인 gradual mean shift 비교를 보강할 때
-- 리뷰어가 streaming drift baseline 하나를 요구할 때
-
----
-
-## 10. 최종 실험 로드맵
-
-### Phase 1. 최소 베이스라인 구현
-
-```text
-CUSUM
-PCA-SPE / T²
-MC-TIRE
-Rule-based method
-LLM-based method
-```
-
-### Phase 2. 기본 Bias Dataset 생성
-
-```text
-Clean control
-Single-sensor step
-Single-sensor ramp
-Multi-sensor inconsistent bias
-Coordinated relation-preserving bias
-```
-
-### Phase 3. Blind Spot 분석
-
-모델별로 다음을 확인한다.
-
-```text
-CUSUM이 놓치는 shift
-PCA가 놓치는 shift
-MC-TIRE가 benign과 harmful을 구분하지 못하는 조건
-```
-
-### Phase 4. 추가 베이스라인 확장
-
-```text
-GDN
-ADWIN
-KL-CPD
-TranAD
-Page-Hinkley
-```
-
-### Phase 5. 최종 Benchmark 구성
-
-모델들이 쉽게 탐지하는 강한 공격보다 다음 조건을 중심으로 구성한다.
-
-```text
-낮은 magnitude
-느린 gradual drift
-관계를 일부 보존하는 coordinated shift
-자연 이용조건 변화와 유사한 shift
-RUL 예측에는 큰 영향을 주는 silent shift
-```
-
----
-
-## 11. 최종 정리
-
-### 지금 바로 구현할 모델
-
-```text
-1. CUSUM
-2. PCA-SPE / Hotelling's T²
-3. MC-TIRE
-```
-
-### 이후 추가할 모델
-
-```text
-4. GDN
-5. ADWIN
-6. KL-CPD
-7. TranAD
-8. Page-Hinkley
-```
-
-초기 실험의 핵심은 단순히 가장 높은 F1-score를 얻는 모델을 찾는 것이 아니다.
-
-```text
-어떤 shift를 CUSUM이 놓치는가?
-어떤 관계 변화에서 PCA가 실패하는가?
-MC-TIRE는 natural shift와 harmful sensor shift를 구분할 수 있는가?
-탐지하기 어렵지만 RUL 예측을 크게 훼손하는 shift는 무엇인가?
-```
-
-이 질문에 답할 수 있도록 bias injection dataset을 설계하고, 그 결과를 바탕으로 GDN 및 추가 모델을 단계적으로 확장한다.
-
----
-
-# [0729 업데이트] 구현 계획 — 데이터셋 생성 설계 & 실험 준비물
+# [0729 구현] 데이터셋 생성 설계 & 실험 준비물
 
 > shift detection 성능에만 집중하는 1차 실험 기준. decision/correction 축은 이번 단계에서 보고하지 않고,
-> RUL impact는 §6 메타데이터로만 기록해 둔다 (dangerous silent shift 셀 판별용).
+> RUL impact는 spec.json 메타데이터로만 기록해 둔다 (dangerous silent shift 셀 판별용).
 
-## 12. 데이터셋 생성 설계
+## 17. 데이터셋 생성 설계
 
-### 12.1 생성 방식: 윈도우 레벨 주입 + npz 영속화
+### 17.1 생성 방식: 윈도우 레벨 주입 + npz 영속화
 
 - 전체 h5 복제는 시나리오당 ~188MB × 27개 ≈ 5GB로 낭비. 파이프라인이 실제로 소비하는 것은
   per-cycle canonical window 텐서 `(수명 cycles, 50, 18)`이므로 **이것만 저장**한다
   — 시나리오당 ~2MB (float32).
-- 저장 스키마: `dataset/corrupted_grid/<scenario_id>/`
+- 저장 스키마 (0729 계층화): `dataset/corrupted_grid/<category>/<block>/<scenario_id>__u<unit>/`
+  - category = `natural` | `adversarial`, block = `case1_single_T48` / `case2_temp4mix` /
+    `case3_pc1_coordinated` / `case4_fault_on_natural` / `mode_sweep` / `profile_sweep` /
+    `all14_uniform`
   - `windows.npz` — corrupted windows, cycles, true_rul
-  - `spec.json` — §6 메타데이터 전부: fault_channels/scope/profile, onset, ramp_len, direction,
-    raw_bias·σ-normalized bias, realised detector-cons, clean/corrupted RUL 예측,
-    rul_prediction_difference, rul_rmse 변화, consistency/regime score, 시드
+  - `spec.json` — 메타데이터 전부: category/block, fault_mode/seed, fault_channels/
+    pattern/profile(+길이, lag_tau), onset, direction, σ배율, delta 물리 단위(°R/psia),
+    realised cons/regime (+plateau_def: 미포화 프로파일은 last5), RUL 피해(ΔRUL·RMSE 변화),
+    clean/corrupted RUL 예측 시퀀스, 결정 포인트
 - clean control (u11/u14/u15)은 원본 h5에서 그대로 로드 — 저장 불필요.
 - 주입 엔진은 이미 있음: `grid_experiment.py`의 `make_grid()` + `inject_windows()`
   (additive, step/ramp15, σ·ch_std 단위). **현재는 in-memory로만 돌므로 npz 저장 단계만 추가하면 됨.**
 
-### 12.2 데이터셋 구성 — 조합 축, 현실성 검토, 최종 인벤토리
+### 17.2 데이터셋 구성 — 조합 축, 현실성 검토, 최종 인벤토리
 
 한 시나리오 = **"센서가 ①어떤 방식으로(모드) ②얼마나 빨리(프로파일) ③어디서(scope)
 ④얼마나 크게(σ) ⑤어느 쪽으로(방향) ⑥누가·언제부터(유닛/onset) 거짓말하는가"**의 조합.
@@ -656,7 +376,7 @@ MC-TIRE는 natural shift와 harmful sensor shift를 구분할 수 있는가?
 | `gain` | x̃ = x·(1+γ·b(c)) | 눈금 간격이 틀어짐 — 값이 클수록 크게 틀림 | **열전대 노화의 전형** (접점 산화→기전력 손실) | 고출력 순간만 왜곡 |
 | `noise` | x̃ = x + ε_t | 손 떨림 — 평균은 맞고 분산만 증가 | 커넥터 부식·EMI (완전 고장의 전조) | 평균 불변 → 평균계 감지기(CUSUM) 원리적 약점 |
 | `stuck` | x̃_t = **상수** (flatline) | 바늘이 얼어붙음 | ADC/DAQ freeze | 윈도우 내 분산 0으로 붕괴, 타 채널과 서서히 괴리. ⚠ 기존 "onset 윈도우 패턴 반복" 구현은 비물리적 → **상수값으로 수정 (구현 반영 예정)** |
-| `lag` | x̃_t = 1차 저역필터(x, τ↑) | 값은 맞는데 **느려짐** | 압력 배관 막힘, 열전대 열질량 증가 | 레벨 불변·동역학만 변화 — 시간 패턴 감지기(TranAD류) 비교에 필수 **(신규, 구현 반영 예정)** |
+| `lag` | x̃_t = 1차 저역필터(x, τ↑) | 값은 맞는데 **느려짐** | 압력 배관 막힘, 열전대 열질량 증가 | 레벨 불변·동역학만 변화 — 시간 패턴 감지기 비교에 필수 **(신규, 구현 반영 예정; τ의 downsampling 가시성 확인 §9.1)** |
 
 spike(순간 튐)는 range check로 잡히는 point anomaly라 제외. 다중 센서 독립 동시 고장은 후속.
 
@@ -668,7 +388,10 @@ spike(순간 튐)는 range check로 잡히는 point anomaly라 제외. 다중 �
 | `ramp15` | 15 cycle 선형 증가 | **빠른** 열화 | 기본 앵커. 현실 에이징 대비 빠른 편임을 명시 |
 | `ramp-slow (L=40)` | 수명 끝까지 미포화 | **현실적 열전대/서미스터 에이징 속도** | 전 감지기의 절벽 예상 — 현실적 최악 셀 **(신규, 구현 반영 예정)** |
 | `exp15` | 초반 급증 후 포화 | 초기 진행 빠른 열화 | step/ramp 중간 |
-| `intermittent` | 30% 간헐 → +30cyc 후 상시 | 접촉 불량 | hysteresis(2연속) 스트레스. ⚠ 현실은 비행 중 고출력 구간 버스트 — cycle 단위 랜덤은 근사임을 한계로 명시 |
+
+> `intermittent`(간헐 발현)은 **0729 검토에서 삭제** — u11 수명 구조상(onset 27 + 잠복 30cyc,
+> 수명 59) 상시 발현 구간이 ~2 cycle뿐이라 산술적으로 불성립, 측정 의미 없음.
+> 재도입한다면 cycle 단위 랜덤이 아니라 비행 내(intra-flight) 버스트 방식으로.
 
 **축 3. 채널 scope — 어디서, 그리고 "센서들끼리 말이 맞는가"**
 
@@ -710,7 +433,7 @@ noise/stuck/lag은 방향 개념 없음.
 **앵커 = (add, ramp15, T48, 1σ, ±) 고정, 한 번에 한 축만 변경** → 시나리오에서 감지기가
 무너지면 원인이 방금 바꾼 그 축이라고 귀속 가능. σ 스윕은 Case 1(절벽)·Case 3(silent)에만.
 
-#### (3) 최종 인벤토리 — 주입 51개 + clean 3개 (`dataset/corrupted_grid/`)
+#### (3) 최종 인벤토리 — 주입 49개 + clean 3개 (`dataset/corrupted_grid/`)
 
 **자연 고장형 (열화 물리에 대응):**
 
@@ -721,13 +444,13 @@ noise/stuck/lag은 방향 개념 없음.
 | Case 2 상관 붕괴 | 6 | scope | add × ramp15 × temp4-mix × {0.5,1,2}σ × ± | 다변량 감지기의 강점 축 |
 | Case 4 natural+fault | 4 | 유닛 | add × ramp15 × T48 × 1σ × ± @ u14, u15 | benign 위 fault 구분 |
 | M 모드 스윕 | 5 | 모드 | gain 1σ ± / noise 1σ / stuck(flatline) / **lag(τ↑)** @ 앵커 | 모드별로 이기는 감지기가 달라지나 |
-| P 프로파일 스윕 | 6 | 프로파일 | exp15 ± / intermittent ± / **ramp-slow(L=40) ±** @ 앵커 1σ | 발현 속도 vs latency, 현실적 느린 drift |
+| P 프로파일 스윕 | 4 | 프로파일 | exp15 ± / **ramp-slow(L=40) ±** @ 앵커 1σ | 발현 속도 vs latency, 현실적 느린 drift |
 
 **적대적 (FDIA/stealth — 자연 고장 아님, 별도 카테고리로 보고):**
 
 | 블록 | 수 | 조합 명세 | 답하려는 질문 |
 |---|---|---|---|
-| Case 3 PC1-coordinated | 10 | add × ramp15 × PC1 × {0.5,1,2,3,4}σ × ± | on-manifold 공격 — rule/SPE 사각지대 (예비 실행으로 확인) |
+| Case 3 PC1-coordinated | 10 | add × ramp15 × PC1 × {0.5,1,2,3,4}σ × ± | on-manifold 공격 — SPE 사각지대 (예비 실행으로 확인) |
 | S all14-uniform | 2 | add × ramp15 × all14 × 1σ × ± | 관계 보존 공격의 다른 기전 |
 
 각 폴더: `windows.npz` (오염 윈도우 (수명,50,18) + cycles + 무오염 true RUL) +
@@ -743,20 +466,24 @@ clean/corrupt 예측 시퀀스). → spec.json만 모아 "감지 난이도 × RU
 
 #### (5) 이번에 만들지 않는 것 (이연 + 한계 명시)
 
-- onset {30,45,60}% × 시드 3개(noise/intermittent) 반복 — 갈리는 시나리오에만, mean±std 보고
+- onset {30,45,60}% × 시드 3개(noise 등 확률 모드) 반복 — 갈리는 시나리오에만, mean±std 보고
 - 비행 내(intra-flight) intermittent 버스트, 압력 채널 lag 변형, 다중 센서 독립 동시 고장
-- MC-TIRE 학습 입력(윈도우 연결)은 npz에서 파생 — 별도 저장 불필요
 
-### 12.3 detector별 입력 표현 (결정 사항 포함)
+### 17.3 detector별 입력 표현
 
 | detector | 입력 | 상태 |
 |---|---|---|
-| CUSUM / PCA-SPE·T² / rule / LLM | 결정 포인트(3 cycle 간격) 18차원 z_global 시퀀스 — 기존 packets와 동일 | 그대로 사용 |
-| MC-TIRE | 시계열 원본 필요 — **(a)** per-cycle 요약 시퀀스 (~59 샘플 × 14ch, TIRE 창 대비 짧음) vs **(b)** canonical window 연결 (59×50=2,950 timestep × 14ch, cycle 경계에 shift 반영) | **(b) 권장, 결정 필요** |
+| CUSUM / PCA-SPE·T² (raw·regime) / LLM | 결정 포인트(3 cycle 간격) 18차원 z_global 또는 regime 신호 시퀀스 — 기존 packets와 동일 | 그대로 사용 |
+| OC-MLP Residual | canonical window의 per-timestep (W_t → 14센서) 예측 잔차 → cycle score | **신규** |
+| ContextMMD | 최근 buffer 9–15 cycle의 timestep 표본 (X_t, W_t) vs 전체 수명 clean reference | **신규 (v3)** |
+| D3-Regime | cycle당 70차원 residual feature (센서별 mean/std/slope/min/max) | **신규 (v3)** |
+| GDN-Regime | cycle별 canonical window의 regime residual (50×14), 비연결(§9.1) | **신규** |
+| ~~RIV/RIF~~ | ~~결정 포인트 window 내 (X_{-j}, e_j) MI~~ | **제외 — §18.3 결정 13** |
+| ~~MC-TIRE~~ | ~~canonical window 연결 시계열~~ | **제외 — §18.3 결정 10** |
 
-## 13. 베이스라인 실험 준비물 체크리스트
+## 18. 베이스라인 실험 준비물 체크리스트
 
-### 13.1 이미 있는 것
+### 18.1 이미 있는 것
 
 - 주입 엔진 + 그리드 빌더 + **CUSUM** + **PCA-SPE/T²**(1차 구현) + **rule 게이트** +
   공통 hysteresis(2연속) + 블라인드스팟 매트릭스: `grid_experiment.py` (예비 실행 완료,
@@ -764,33 +491,165 @@ clean/corrupt 예측 시퀀스). → spec.json만 모아 "감지 난이도 × RU
 - zero-FAR 캘리브레이션 절차 (u20, CUSUM·PCA 공통)
 - LLM 에이전트 실행 경로 (`agent.run_llm`, vLLM + Qwen2.5-32B-AWQ)
 
-### 13.2 필요한 작업 (난이도 순)
+### 18.2 필요한 작업 (난이도 순)
 
 1. **지표 확장** (낮음) — 현재 event/latency/point-recall/FA만 산출 →
-   §8.1 전체: precision, F1, FPR, FA/100cycles, event-level rate, **raw vs hysteresis 병행 보고**.
-2. **데이터셋 npz 영속화** (낮음, §12.1) — 재현성 + MC-TIRE 학습 입력으로 필수.
-3. **PCA 캘리브레이션 보정** (낮음) — 예비 실행에서 margin 1.0이 no_shift에 FA 1 발생,
-   전 시나리오 L4 균일 검출도 임계 과민 신호 → margin {1.2, 1.5} 스윕 또는
-   "FA ≤ 1회/100 cycles" 기준(분위수)으로 전환 검토.
-4. **u14/15 corrupted 시나리오** (낮음, §12.2 확장 A).
-5. **MC-TIRE 통합** (중간) —
-   - 외부 코드: github.com/caozhenxiang/MC-TIRE (다채널 확장판) ⚠ **다운로드 전 확인 필요**
-   - 의존성: TF/Keras 계열 → LLMshift env에 설치할지 별도 env 만들지 결정
-   - 입력 표현 결정 (§12.3), clean 학습 (u2/5/10/16/18) → u20 캘리브레이션 →
-     score→alarm 변환 + 공통 hysteresis
-   - §8.3 generic 기준(natural도 positive)으로 별도 평가 축 추가
-6. **LLM 그리드 실행 스크립트** (중간) — 27+ 시나리오 × ~20 포인트 × 5 샘플 ≈ **2,700+ 콜**
-   (기존 545샘플 실행의 ~5배 시간). vLLM 배치 처리, GPU 점유 확인 후 실행.
+   §14.3 전체: precision, F1, AUPRC, FPR, FA/100cycles, Flight Class별·수명 전/후반부
+   FPR, **raw vs hysteresis 병행 보고**.
+2. **데이터셋 npz 영속화** (낮음, §17.1) — 재현성 + 딥·분포 detector 학습/reference
+   입력으로 필수.
+3. **공통 score 로깅 스키마** (낮음, §18.3 결정 14) — 결정 포인트마다 정규화
+   detector score 벡터 저장. 이후 fusion/LLM evidence 확장의 전제조건이므로
+   **러너 개발 초기에 반영**.
+4. **PCA 캘리브레이션 보정** (낮음) — 예비 실행에서 margin 1.0이 no_shift에 FA 1 발생
+   → margin {1.2, 1.5} 스윕 또는 분위수 기준 전환 검토.
+5. **u14/15 corrupted 시나리오** (낮음, §17.2 Case 4).
+6. **OC-MLP Residual 구현** (중간) — clean units(u2/5/10/16/18)로 W→14센서 MLP 학습
+   → u20 캘리브레이션 → cycle score + 공통 hysteresis. 기존 polynomial regime
+   residual과 성능 비교 병기.
+7. **ContextMMD 통합** (중간) — `alibi-detect` 설치 (⚠ **외부 패키지 — 설치 전 사용자
+   확인**), §7 구현 규정(표본=timestep, 전체 수명 reference, buffer latency 병기).
+8. **D3-Regime 통합** (중간) — 공식 레포 (⚠ **외부 다운로드 전 사용자 확인**; 구조
+   단순해 LR-AUC 직접 재현으로 대체 가능), §8 구현 규정.
+9. **GDN-Regime 통합** (높음) — 공식 `d-ailin/GDN` (⚠ **외부 다운로드 전 사용자
+   확인**), regime residual 입력·cycle 비연결(§9.1), latch(§9.2), 공통
+   캘리브레이션·cadence. lag τ의 downsampling 가시성 사전 확인.
+10. **LLM 그리드 실행 스크립트** (중간) — 실행 범위는 §18.3 결정 8의 21 시리즈
+    (≈ 2,100콜). vLLM 배치 처리, GPU 점유 확인 후 실행.
+11. ~~MC-TIRE 통합~~ — 폐기 (결정 10). ~~RIV/RIF pilot~~ — 폐기 (결정 13).
 
-### 13.3 결정 사항 (0729 확정)
+### 18.3 결정 사항 (0729 확정)
 
 1. 공통 캘리브레이션 기준 → **FA ≤ 1/100 cycles (분위수)** 채택.
    u20 결정 포인트 통계량의 q-분위수(q = 1 − DECISION_EVERY/100 = 0.97)를 임계값으로.
    FAR 0%(max) 버전은 부록 병행 보고 가능. 한계: u20 결정 포인트가 ~25개라 97% 분위수는
    상위 1~2번째 값 근처 — max보다는 덜 brittle하지만 여전히 얇은 표본임을 명시.
-2. MC-TIRE 입력 표현 → **(b) canonical window 연결** (2,950 timestep × 14ch).
+2. ~~MC-TIRE 입력 표현~~ — **결정 10으로 폐기**.
 3. 세분 σ 그리드 → **확정**: Case 1 ramp +{0.15, 0.25, 0.35}σ×±, Case 3 +{3, 4}σ×± (+10개).
-4. LLM 실행 범위 → **성능 갈리는 부분집합만** (controls + 애매 구간 ~10 시나리오 ≈ 1,000콜).
+4. LLM 실행 범위 → **성능 갈리는 부분집합만** → 결정 8로 구체화.
+5. **intermittent 프로파일 삭제** — 산술적 불성립 (§17.2 축 2 주석).
+6. **rule 감지기를 detection 벤치마크에서 제외** — rule의 고정 게이트(cons>3 등)는
+   공통 FA 캘리브레이션 프로토콜 밖에 있어 운영점 비교가 성립하지 않음(순환 의심 포함).
+   rule 에이전트 자체는 llmshift의 에이전트 실험(패밀리 A, 보정/결정 축)에서만 사용.
+7. **감지 크레딧 = 알람 전이(off→on) + SAT 표기** — 감지 성공은 onset 이후
+   첫 off→on 전이에만 부여. pre-onset부터 hysteresis 확정 알람이 지속 중인 시리즈는
+   **SAT(포화, 판정 불능)**로 표기: recall/latency 집계에서 제외, 해당 오탐은 FPR에 계상.
+   근거: c4 파일럿에서 natural 유닛의 상시 오탐이 "L0 즉시 감지"로 잘못 집계됨 —
+   항상 울리는 알람은 fault에 대한 정보량이 0.
+8. **LLM 실행 부분집합 — 입력(σ) 기반 사전 박제, 21 시리즈.**
+   선정 기준은 베이스라인 결과·우리 신호(cons) 모두 불사용, 데이터셋 속성만 사용:
+   "컨트롤 전부 + natural+fault + 물리적 현실 크기(0.15~0.35σ) 구간 + 결함 모드 + 적대적 대표."
 
-주: rule/LLM 에이전트는 고정 게이트(cons/regime 임계)라 분위수 캘리브레이션 대상이 아님 —
-공정성 논의에서 "베이스라인은 clean-FA 기준으로 캘리브레이션, 에이전트는 사전 고정 게이트" 명시.
+   | 그룹 | 시리즈 |
+   |---|---|
+   | 컨트롤 | no_shift(u11), natural(u14), natural(u15) |
+   | natural+fault | c4_natural_fault_u14_{neg,pos}, c4_natural_fault_u15_{neg,pos} |
+   | 현실 크기 구간 | c1_T48_ramp_{0.15,0.25,0.35}s_{neg,pos} (6) |
+   | 결함 모드 | m_gain_T48_ramp_1s_{neg,pos}, m_noise_T48_ramp_1s, m_stuck_T48 |
+   | 적대적 대표 | c3_coord_pc1_ramp_{1,2}s_{neg,pos} (4) |
+
+   각 시리즈는 유닛 수명 **전체**(pre-onset clean 구간 포함, 결정 포인트 ~20개 × 5샘플)를
+   온전한 시계열로 실행 — pre-onset은 FPR 측정 구간이고, RUL 히스토리 축적과 hysteresis에
+   연속 시퀀스가 필요. ≈ 2,100콜. **모든 LLM-베이스라인 비교표는 이 21개 부분집합 내
+   수치끼리만 구성** (전체 그리드 pooled와 혼합 금지).
+9. **harmful 라벨 — Harmfulness Assessment 단계 전용 채점** (detection 벤치마크는
+   §2의 주입=1 라벨 사용 — 역할 분담, 결정 16 참조).
+
+   **컨셉 재확인**: 본 연구의 목표는 정상 엔진 열화의 감지가 아니라, **비정상적인 센서
+   고장 등으로 인해 LSTM이 잘못된 예측을 내는 상황을 감지·보정**하는 것.
+   따라서 harm의 정의 = **배치된 LSTM의 예측 왜곡**(모델 종속적 정의 — 목적이 해당 모델의
+   보호이므로 원리적. 모델 무관 심각도는 주입 크기 σ 축이 담당).
+
+   **채점 규칙** (컨셉의 직접 번역):
+
+   | 상황 | 컨셉상 성격 | 채점 |
+   |---|---|---|
+   | 정상 엔진 열화 (RUL 실제 감소) | 정상 — 모델이 맞게 예측 중 | 울리면 오탐 |
+   | 자연 운용 변화 (flight class 등) | 정상 — 센서는 진실을 말함 | 울리면 오탐 |
+   | 센서 고장 → LSTM 예측 왜곡 (post-onset 평균 \|ΔRUL\| > 5cyc) | **잡을 대상** | 놓치면 미탐 |
+   | 센서 고장이지만 예측 무왜곡 (\|ΔRUL\| ≤ 5cyc) | 잡을 이유 없음 | **채점 제외 (ignore)** |
+
+   임계 5cyc = REPLACE 임계(10)의 절반; {3, 5, 10} 민감도 표 병기로 임계 선택 자의성 방어.
+
+   **근거 — "센서가 망가지면 예측도 틀어진다"는 직관은 성립하지 않음** (파일럿 실측):
+   c1 T48 단독 1σ → ΔRUL 36cyc / c3 PC1 방향 **4σ·14채널** → ΔRUL **5.2cyc**.
+   LSTM은 민감한 방향이 따로 있고(단일 채널 이탈엔 크게, 정상 상관 방향 이동엔 거의 무반응),
+   noise는 윈도우 평균에서 상쇄, stuck은 초기엔 참값과 동일. 따라서 감지 난이도와 RUL 피해는
+   **독립된 두 축**이며 2×2 셀이 전부 실재:
+
+   | | 예측 틀어짐 | 예측 무왜곡 |
+   |---|---|---|
+   | 잡기 쉬움 | 보통의 fault | 시끄럽지만 무해 |
+   | 잡기 어려움 | ★ **dangerous silent shift** (핵심 타깃) | 무해+안 보임 → ignore |
+
+   이 두 축을 분리 기록하는 것(spec.json의 σ·실현cons ↔ ΔRUL)이 §17.1 메타데이터 설계의 이유.
+10. **딥 CPD 계열(MC-TIRE, KL-CPD) 제외 — 코드 삭제.**
+   근거: ① KL-CPD를 BSD-3 공식 코드 포팅으로 실제 통합·실행한 결과, 윈도우 연결
+   시계열에서 **clean 데이터의 비행 간 자연 변동(배경 cycle 점수 평균 2.0, max 4.4)이
+   fault 신호(2σ step에서 2.5)를 완전히 덮음** — 연결 시계열 CPD가 이 데이터 구조에
+   부적합함을 실측 확인. ② MC-TIRE도 동일 입력을 쓰므로 같은 문제 예상 + 인용수 우려.
+   딥 슬롯은 GDN-Regime으로 재선정 (§9 — point-wise 이상 감지라 결정 케이던스와 정합).
+11. **입력 그룹 분류 정정** — 그룹 기준 = "운항조건 W 사용 여부". OC-MLP·RIV/RIF는
+   정의상 regime 측 (v2에서 정정). v3에서는 본 표 전체가 regime 기본이 되어 Raw
+   변형은 ablation 전용으로 격리 (§12).
+12. **score-fusion baseline 미채택** — 연구 질문을 시스템 대 시스템 성능 주장으로
+   한정. 원인 귀속은 consistency ablation + §18.4 통제 실험 담당. (결정 14에서 재확인)
+13. **(v3) 라인업 개편** — ContextMMD·D3-Regime 편입 / RIV/RIF 제외(공개 코드 부재,
+   MI 재현 비용) / USAD·TranAD 제외(**ContextMMD·D3가 고정 reference 비교로 지속
+   off-manifold 분포 변화를 커버** — "GDN 중복"이 아니라 역할 대체가 사유) /
+   선정 기준에 "공개 구현 존재" 명문화 (§4–5, §13).
+14. **(v3) fusion baseline 현행 스코프 제외 (결정 12 재확인)** — 설계는 §16.3에 보존.
+   단, **러너는 결정 포인트마다 정규화 detector score 벡터를 공통 스키마로 저장**
+   (§18.2 항목 3) — 이연 비용을 0으로 만드는 유일한 조건.
+15. **(v3) 전체 수명 reference 원칙** — ContextMMD reference set·D3 reference
+   domain·딥 detector 학습 데이터는 train unit의 **전체 수명** clean residual로 구성.
+   초기 healthy만 사용 시 수명 후반 clean 구간 오탐 (트레이드오프: 열화와 닮은
+   ramp-slow의 recall 하락은 문제 정의상 필연 — ramp-slow 셀이 이 경계를 측정).
+   검증 지표 = 수명 전/후반부 FPR (§14.3).
+16. **(v3) 라벨 역할 분담** — detection 벤치마크(Table A) = §2 라벨(주입=1, RUL 영향
+   무관) / harmful 채점(결정 9) = Harmfulness Assessment 단계 전용. 상충 아님.
+17. **(v3) LLM 입력은 현행 Tier-1 신호 유지** (regime_z, consistency_z, RUL history)
+   — detector score 벡터를 evidence로 받는 재설계는 fusion 단계와 함께 이연 (§16.3).
+   fusion baseline 없이 LLM에만 detector score를 주면 입력 공정성 비판이 재발하고
+   packets/prompt 재작업 비용이 크다.
+
+### 18.4 입력 공정성 프레이밍과 통제 실험 (0729 확정)
+
+**주장 구조**: 본 논문의 기본 주장은 시스템 대 시스템 — "Tier-1 신호 + LLM 추론으로 구성된
+에이전트가 기존 통계/모델 기반 shift 감지기보다 낫다." 에이전트가 더 풍부한 입력을 받는 것은
+시스템 설계의 일부이므로 핸디캡을 주지 않는다 (LLM은 방향·원인·보정·결정까지 전부 수행).
+
+**단, 승인의 원인 귀속(피처 vs 추론)을 위해 통제 실험 1개를 ablation으로 추가:**
+
+```
+베이스라인(raw z) < 베이스라인(+우리 피처) < rule(피처+게이트) < LLM(피처+추론)
+                    └── CUSUM-regime / PCA-regime (§5) ──┘
+```
+
+- **CUSUM-Regime / PCA-Regime**: 동일 러너에서 입력만 z_global → regime-조건부 신호
+  (regime_z, consistency_z 벡터)로 교체. 비용 ≈ 0.
+- 해석 (어느 쪽이든 유리):
+  - 피처를 받아도 지면 → "이득은 피처가 아니라 추론 로직" 입증, 주장 강화
+  - 피처를 받아 감지가 비슷해지면 → 감지는 commodity로 재프레이밍하고, LLM 고유 가치는
+    감지기가 원리적으로 못 하는 축으로: 방향(adverse/favorable) 판정, 원인 구분
+    (benign vs harmful), RUL 보정, 결정, 애매구간(cons 3~4) recall·latency 우위
+    (기존 실측: rule 0.64→LLM 1.00, latency 13→1)
+- 근거가 되는 자체 데이터: consistency ablation 시 adverse F1→0 (피처 지배력),
+  rule 에이전트 P=1.00/FPR=0.00 (같은 피처 + 손코딩 게이트) — "피처만으로 충분한가"라는
+  질문은 우리 결과에서 자연히 제기되므로 선제 대응 필수.
+
+### 18.5 보완 검토 목록 (제안 — 미확정, 채택 시 개별 승인)
+
+1. generic(natural도 positive) 기준과 harmful(결정 9) 기준을 별도 표로 병행 보고.
+2. **베이스라인 하이퍼파라미터 튜닝**: u20에 주입한 튜닝 전용 fault로 CUSUM k, PCA 성분수,
+   ContextMMD kernel/버퍼, D3 window, GDN L/top-k 등 소규모 그리드서치 — strawman 비판
+   방지 (테스트 유닛 불사용 명시).
+3. **FA-budget 스윕**: q ∈ {0.5, 1, 2, 5회/100cyc}로 recall-vs-FA 곡선 — 단일 운영점 비판 방지.
+4. **반복 실험**: 갈리는 시나리오에 onset {30/45/60%} × 확률 모드 시드 3개 → mean±std.
+5. **캘리브레이션 표본 확충**: 임계값 산정만 per-cycle(u20 ~75점) 사용, 부트스트랩 CI 병기.
+6. **dangerous silent shift 구성적 탐색**: LSTM 입력 민감도(∂RUL/∂x)를 저-consistency
+   부분공간에 사영한 방향으로 주입 (Case 3b) — PC1은 RUL 피해 최대 10.5로 부족 확인됨.
+7. **latency 이중 보고**: onset 기준 + "신호 0.5σ 도달 시점" 기준 (느린 ramp 왜곡 보정).
+8. **채널 귀속 로깅**: CUSUM 발화 채널·PCA contribution·OC-MLP/GDN sensor score 저장
+   → 추후 fault isolation 비교 (§14.3 localization 지표의 근거 데이터).
+9. **재현성 스탬프**: spec.json/결과에 git hash 기록. 통계 감지기 per-cycle 케이던스 민감도 각주.

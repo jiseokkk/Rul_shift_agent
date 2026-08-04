@@ -2,48 +2,177 @@
  "protocol": {
   "fa_per_100cyc": 1.0,
   "q": 0.97,
-  "hyst_n": 2
+  "hyst_n": 2,
+  "credit": "transition+SAT (13.3-#7)"
  },
- "pooled_harmful": {
+ "pooled_by_category": {
   "CUSUM": {
-   "precision": 0.8,
-   "recall": 0.33,
-   "f1": 0.46,
-   "fpr": 0.09,
-   "tp": 141,
-   "fp": 36,
-   "fn": 289,
-   "tn": 381
+   "natural": {
+    "precision": 0.67,
+    "recall": 0.19,
+    "f1": 0.29,
+    "fpr": 0.07,
+    "tp": 73,
+    "fp": 36,
+    "fn": 316,
+    "tn": 480,
+    "sat_series": 2
+   },
+   "adversarial": {
+    "precision": 0.57,
+    "recall": 0.36,
+    "f1": 0.44,
+    "fpr": 0.07,
+    "tp": 48,
+    "fp": 36,
+    "fn": 84,
+    "tn": 480,
+    "sat_series": 0
+   }
+  },
+  "CUSUM_REG": {
+   "natural": {
+    "precision": 0.91,
+    "recall": 0.69,
+    "f1": 0.79,
+    "fpr": 0.05,
+    "tp": 270,
+    "fp": 27,
+    "fn": 119,
+    "tn": 489,
+    "sat_series": 2
+   },
+   "adversarial": {
+    "precision": 0.81,
+    "recall": 0.89,
+    "f1": 0.85,
+    "fpr": 0.05,
+    "tp": 118,
+    "fp": 27,
+    "fn": 14,
+    "tn": 489,
+    "sat_series": 0
+   }
+  },
+  "KLCPD": {
+   "natural": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 419,
+    "tn": 516,
+    "sat_series": 0
+   },
+   "adversarial": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "fpr": 0.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 132,
+    "tn": 516,
+    "sat_series": 0
+   }
   },
   "PCA_SPE": {
-   "precision": 0.91,
-   "recall": 0.68,
-   "f1": 0.78,
-   "fpr": 0.07,
-   "tp": 291,
-   "fp": 29,
-   "fn": 139,
-   "tn": 388
+   "natural": {
+    "precision": 0.9,
+    "recall": 0.6,
+    "f1": 0.72,
+    "fpr": 0.06,
+    "tp": 252,
+    "fp": 29,
+    "fn": 167,
+    "tn": 487,
+    "sat_series": 0
+   },
+   "adversarial": {
+    "precision": 0.79,
+    "recall": 0.8,
+    "f1": 0.79,
+    "fpr": 0.06,
+    "tp": 106,
+    "fp": 29,
+    "fn": 26,
+    "tn": 487,
+    "sat_series": 0
+   }
+  },
+  "PCA_SPE_REG": {
+   "natural": {
+    "precision": 1.0,
+    "recall": 0.79,
+    "f1": 0.88,
+    "fpr": 0.0,
+    "tp": 329,
+    "fp": 0,
+    "fn": 90,
+    "tn": 516,
+    "sat_series": 0
+   },
+   "adversarial": {
+    "precision": 1.0,
+    "recall": 0.91,
+    "f1": 0.95,
+    "fpr": 0.0,
+    "tp": 120,
+    "fp": 0,
+    "fn": 12,
+    "tn": 516,
+    "sat_series": 0
+   }
   },
   "PCA_T2": {
-   "precision": 0.63,
-   "recall": 0.2,
-   "f1": 0.3,
-   "fpr": 0.12,
-   "tp": 85,
-   "fp": 50,
-   "fn": 345,
-   "tn": 367
+   "natural": {
+    "precision": 0.09,
+    "recall": 0.01,
+    "f1": 0.02,
+    "fpr": 0.1,
+    "tp": 5,
+    "fp": 50,
+    "fn": 384,
+    "tn": 466,
+    "sat_series": 2
+   },
+   "adversarial": {
+    "precision": 0.55,
+    "recall": 0.47,
+    "f1": 0.51,
+    "fpr": 0.1,
+    "tp": 62,
+    "fp": 50,
+    "fn": 70,
+    "tn": 466,
+    "sat_series": 0
+   }
   },
-  "RULE": {
-   "precision": 1.0,
-   "recall": 0.54,
-   "f1": 0.7,
-   "fpr": 0.0,
-   "tp": 231,
-   "fp": 0,
-   "fn": 199,
-   "tn": 417
+  "PCA_T2_REG": {
+   "natural": {
+    "precision": 1.0,
+    "recall": 0.28,
+    "f1": 0.44,
+    "fpr": 0.0,
+    "tp": 119,
+    "fp": 0,
+    "fn": 300,
+    "tn": 516,
+    "sat_series": 0
+   },
+   "adversarial": {
+    "precision": 1.0,
+    "recall": 0.91,
+    "f1": 0.95,
+    "fpr": 0.0,
+    "tp": 120,
+    "fp": 0,
+    "fn": 12,
+    "tn": 516,
+    "sat_series": 0
+   }
   }
  },
  "scenarios": {
@@ -53,6 +182,20 @@
    "units": {
     "11": {
      "CUSUM": {
+      "raw": {
+       "fa_points": 0,
+       "n_points": 20,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 20,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "CUSUM_REG": {
       "raw": {
        "fa_points": 0,
        "n_points": 20,
@@ -94,12 +237,40 @@
        "first_fa_cycle": 34
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
        "fa_points": 0,
        "n_points": 20,
        "fa_per_100cyc": 0.0,
        "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 20,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "fa_points": 0,
+       "n_points": 20,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 20,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "fa_points": 1,
+       "n_points": 20,
+       "fa_per_100cyc": 1.7,
+       "first_fa_cycle": 52
       },
       "hyst": {
        "fa_points": 0,
@@ -130,6 +301,20 @@
        "first_fa_cycle": 13
       }
      },
+     "CUSUM_REG": {
+      "raw": {
+       "fa_points": 20,
+       "n_points": 26,
+       "fa_per_100cyc": 26.3,
+       "first_fa_cycle": 19
+      },
+      "hyst": {
+       "fa_points": 19,
+       "n_points": 26,
+       "fa_per_100cyc": 25.0,
+       "first_fa_cycle": 22
+      }
+     },
      "PCA_T2": {
       "raw": {
        "fa_points": 26,
@@ -158,7 +343,35 @@
        "first_fa_cycle": 4
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
+      "raw": {
+       "fa_points": 1,
+       "n_points": 26,
+       "fa_per_100cyc": 1.3,
+       "first_fa_cycle": 73
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 26,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "fa_points": 7,
+       "n_points": 26,
+       "fa_per_100cyc": 9.2,
+       "first_fa_cycle": 1
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 26,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "KLCPD": {
       "raw": {
        "fa_points": 0,
        "n_points": 26,
@@ -175,6 +388,20 @@
     },
     "15": {
      "CUSUM": {
+      "raw": {
+       "fa_points": 0,
+       "n_points": 23,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 23,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "CUSUM_REG": {
       "raw": {
        "fa_points": 0,
        "n_points": 23,
@@ -216,12 +443,40 @@
        "first_fa_cycle": 19
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
        "fa_points": 0,
        "n_points": 23,
        "fa_per_100cyc": 0.0,
        "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 23,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "fa_points": 0,
+       "n_points": 23,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      },
+      "hyst": {
+       "fa_points": 0,
+       "n_points": 23,
+       "fa_per_100cyc": 0.0,
+       "first_fa_cycle": null
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "fa_points": 1,
+       "n_points": 23,
+       "fa_per_100cyc": 1.5,
+       "first_fa_cycle": 61
       },
       "hyst": {
        "fa_points": 0,
@@ -239,11 +494,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -49.209
      },
      "realised_cons_plateau": 4.03,
      "realised_regime_plateau": -1.12,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 27.36,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 34.34
@@ -253,73 +510,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
-       "point_recall": 1.0,
-       "precision": 1.0,
-       "f1": 1.0,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -332,11 +629,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 49.209
      },
      "realised_cons_plateau": 4.46,
      "realised_regime_plateau": 1.54,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 14.27,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 11.19
@@ -346,73 +645,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
-       "point_recall": 1.0,
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -425,11 +764,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -98.419
      },
      "realised_cons_plateau": 7.99,
      "realised_regime_plateau": -2.45,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 37.84,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 43.16
@@ -439,73 +780,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
-       "point_recall": 1.0,
+       "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.27,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -518,11 +899,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 98.419
      },
      "realised_cons_plateau": 8.32,
      "realised_regime_plateau": 2.87,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 20.07,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 18.09
@@ -532,73 +915,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
-       "point_recall": 1.0,
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.36,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -611,11 +1034,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -196.837
      },
      "realised_cons_plateau": 15.93,
      "realised_regime_plateau": -5.11,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 43.78,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 48.94
@@ -625,73 +1050,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
+       "status": "detected",
+       "latency_cycles": 10,
        "point_recall": 0.36,
        "precision": 0.8,
-       "f1": 0.5,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.18,
        "precision": 1.0,
-       "f1": 0.31,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -704,11 +1169,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 196.837
      },
      "realised_cons_plateau": 16.1,
      "realised_regime_plateau": 5.53,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 21.07,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 19.28
@@ -718,73 +1185,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 16,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 19,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -797,11 +1304,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -49.209
      },
      "realised_cons_plateau": 3.81,
      "realised_regime_plateau": -0.81,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 24.78,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 32.39
@@ -811,73 +1320,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 7,
-       "point_recall": 0.82,
-       "precision": 1.0,
-       "f1": 0.9,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 10,
-       "point_recall": 0.73,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.84,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -890,11 +1439,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 49.209
      },
      "realised_cons_plateau": 4.77,
      "realised_regime_plateau": 1.85,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 9.4,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 6.56
@@ -904,73 +1455,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 7,
-       "point_recall": 0.82,
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 10,
-       "point_recall": 0.73,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.84,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -983,11 +1574,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -98.419
      },
      "realised_cons_plateau": 7.8,
      "realised_regime_plateau": -2.14,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 36.17,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 42.23
@@ -997,73 +1590,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 19,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 22,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.91,
-       "precision": 1.0,
-       "f1": 0.95,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1076,11 +1709,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 98.419
      },
      "realised_cons_plateau": 8.53,
      "realised_regime_plateau": 3.18,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 14.14,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 11.7
@@ -1090,73 +1725,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.91,
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.27,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1169,11 +1844,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -196.837
      },
      "realised_cons_plateau": 15.78,
      "realised_regime_plateau": -4.8,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 43.5,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 48.76
@@ -1183,73 +1860,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 0.75,
-       "f1": 0.4,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.91,
-       "precision": 1.0,
-       "f1": 0.95,
-       "pre_onset_fa": 0
-      },
-      "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1262,11 +1979,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 196.837
      },
      "realised_cons_plateau": 16.17,
      "realised_regime_plateau": 5.84,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 17.2,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 14.83
@@ -1276,73 +1995,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 22,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 25,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.91,
-       "precision": 1.0,
-       "f1": 0.95,
-       "pre_onset_fa": 0
-      },
-      "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1355,11 +2114,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -14.763
      },
      "realised_cons_plateau": 1.29,
      "realised_regime_plateau": 0.12,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 4.66,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 9.87
@@ -1369,73 +2130,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1448,11 +2249,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 14.763
      },
      "realised_cons_plateau": 2.17,
      "realised_regime_plateau": 0.92,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 3.71,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 2.74
@@ -1462,73 +2265,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 22,
+       "point_recall": 0.36,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 31,
-       "point_recall": 0.09,
-       "precision": 1.0,
-       "f1": 0.17,
-       "pre_onset_fa": 0
-      },
-      "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1541,11 +2384,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -24.605
      },
      "realised_cons_plateau": 1.96,
      "realised_regime_plateau": -0.15,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 9.05,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 14.87
@@ -1555,73 +2400,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 19,
-       "point_recall": 0.09,
-       "precision": 1.0,
-       "f1": 0.17,
-       "pre_onset_fa": 0
-      },
-      "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1634,11 +2519,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 24.605
      },
      "realised_cons_plateau": 2.91,
      "realised_regime_plateau": 1.18,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 5.74,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 3.4
@@ -1648,73 +2535,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.18,
        "precision": 1.0,
-       "f1": 0.31,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 13,
-       "point_recall": 0.64,
-       "precision": 1.0,
-       "f1": 0.78,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 16,
-       "point_recall": 0.55,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.71,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1727,11 +2654,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": -34.447
      },
      "realised_cons_plateau": 2.67,
      "realised_regime_plateau": -0.41,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 14.97,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 21.55
@@ -1741,73 +2670,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 10,
-       "point_recall": 0.73,
-       "precision": 1.0,
-       "f1": 0.84,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 13,
-       "point_recall": 0.64,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1820,11 +2789,13 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T48": 34.447
      },
      "realised_cons_plateau": 3.65,
      "realised_regime_plateau": 1.45,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 7.35,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 4.64
@@ -1834,73 +2805,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.18,
        "precision": 1.0,
-       "f1": 0.31,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 13,
-       "point_recall": 0.64,
-       "precision": 1.0,
-       "f1": 0.78,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 16,
-       "point_recall": 0.55,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.71,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -1913,6 +2924,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -8.995,
       "T30": 16.652,
@@ -1921,6 +2933,7 @@
      },
      "realised_cons_plateau": 9.65,
      "realised_regime_plateau": -3.18,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 8.92,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 5.97
@@ -1930,73 +2943,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 22,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 25,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2009,6 +3062,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 8.995,
       "T30": -16.652,
@@ -2017,6 +3071,7 @@
      },
      "realised_cons_plateau": 10.84,
      "realised_regime_plateau": 4.21,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 27.26,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 34.88
@@ -2026,73 +3081,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 25,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 28,
        "point_recall": 0.18,
        "precision": 1.0,
-       "f1": 0.31,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2105,6 +3200,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -17.99,
       "T30": 33.303,
@@ -2113,6 +3209,7 @@
      },
      "realised_cons_plateau": 19.9,
      "realised_regime_plateau": -6.87,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 13.62,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 10.95
@@ -2122,73 +3219,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 16,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2201,6 +3338,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 17.99,
       "T30": -33.303,
@@ -2209,6 +3347,7 @@
      },
      "realised_cons_plateau": 21.08,
      "realised_regime_plateau": 7.91,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 39.34,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 45.27
@@ -2218,73 +3357,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 16,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2297,6 +3476,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -35.98,
       "T30": 66.607,
@@ -2305,6 +3485,7 @@
      },
      "realised_cons_plateau": 40.39,
      "realised_regime_plateau": -14.26,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 16.88,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 14.29
@@ -2314,73 +3495,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
-       "point_recall": 1.0,
-       "precision": 1.0,
-       "f1": 1.0,
-       "pre_onset_fa": 0
-      },
-      "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2393,6 +3614,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 35.98,
       "T30": -66.607,
@@ -2401,6 +3623,7 @@
      },
      "realised_cons_plateau": 41.57,
      "realised_regime_plateau": 15.3,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 43.84,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 49.05
@@ -2410,73 +3633,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2489,6 +3752,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -8.995,
       "T30": -17.289,
@@ -2507,6 +3771,7 @@
      },
      "realised_cons_plateau": 0.91,
      "realised_regime_plateau": -11.73,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 1.1,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 4.11
@@ -2516,73 +3781,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 22,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 25,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.18,
        "precision": 0.67,
-       "f1": 0.29,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      }
@@ -2595,6 +3900,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 8.995,
       "T30": 17.289,
@@ -2613,6 +3919,7 @@
      },
      "realised_cons_plateau": 1.22,
      "realised_regime_plateau": 12.77,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 1.02,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 6.05
@@ -2622,73 +3929,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.27,
        "precision": 0.75,
-       "f1": 0.4,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2701,6 +4048,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -17.99,
       "T30": -34.577,
@@ -2719,6 +4067,7 @@
      },
      "realised_cons_plateau": 0.85,
      "realised_regime_plateau": -23.99,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 2.44,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 3.16
@@ -2728,73 +4077,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 16,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.36,
        "precision": 0.8,
-       "f1": 0.5,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       }
      }
@@ -2807,6 +4196,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 17.99,
       "T30": 34.577,
@@ -2825,6 +4215,7 @@
      },
      "realised_cons_plateau": 1.38,
      "realised_regime_plateau": 25.03,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 2.06,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 7.08
@@ -2834,73 +4225,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.45,
        "precision": 0.83,
-       "f1": 0.59,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 28,
        "point_recall": 0.09,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -2913,6 +4344,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -35.98,
       "T30": -69.154,
@@ -2931,6 +4363,7 @@
      },
      "realised_cons_plateau": 1.06,
      "realised_regime_plateau": -48.5,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 4.36,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 2.83
@@ -2940,73 +4373,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 0.91,
-       "f1": 0.91,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3019,6 +4492,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 35.98,
       "T30": 69.154,
@@ -3037,6 +4511,7 @@
      },
      "realised_cons_plateau": 1.71,
      "realised_regime_plateau": 49.53,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 4.53,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 9.93
@@ -3046,73 +4521,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 25,
        "point_recall": 0.27,
        "precision": 1.0,
-       "f1": 0.43,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 28,
        "point_recall": 0.18,
        "precision": 1.0,
-       "f1": 0.31,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.82,
        "precision": 0.9,
-       "f1": 0.86,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3125,6 +4640,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -53.97,
       "T30": -103.731,
@@ -3143,6 +4659,7 @@
      },
      "realised_cons_plateau": 1.34,
      "realised_regime_plateau": -73.0,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 5.09,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 2.83
@@ -3152,73 +4669,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 0.91,
-       "f1": 0.91,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3231,6 +4788,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 53.97,
       "T30": 103.731,
@@ -3249,6 +4807,7 @@
      },
      "realised_cons_plateau": 2.03,
      "realised_regime_plateau": 74.04,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 8.27,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 15.69
@@ -3258,73 +4817,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 19,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 22,
        "point_recall": 0.36,
        "precision": 1.0,
-       "f1": 0.53,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.82,
        "precision": 0.9,
-       "f1": 0.86,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3337,6 +4936,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": -71.96,
       "T30": -138.308,
@@ -3355,6 +4955,7 @@
      },
      "realised_cons_plateau": 1.65,
      "realised_regime_plateau": -97.51,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 5.22,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 2.67
@@ -3364,73 +4965,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 10,
        "point_recall": 0.73,
        "precision": 1.0,
-       "f1": 0.84,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 0.91,
-       "f1": 0.91,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": false,
-       "latency_cycles": null,
-       "point_recall": 0.0,
-       "precision": null,
-       "f1": 0.0,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3443,6 +5084,7 @@
     "11": {
      "onset": 27,
      "life": 59,
+     "mode": "add",
      "delta": {
       "T24": 71.96,
       "T30": 138.308,
@@ -3461,6 +5103,7 @@
      },
      "realised_cons_plateau": 2.37,
      "realised_regime_plateau": 98.55,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 10.48,
      "rul_rmse_clean": 5.09,
      "rul_rmse_corrupt": 19.4
@@ -3470,73 +5113,113 @@
     "11": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 16,
        "point_recall": 0.55,
        "precision": 1.0,
-       "f1": 0.71,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 19,
        "point_recall": 0.45,
        "precision": 1.0,
-       "f1": 0.62,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.82,
        "precision": 0.9,
-       "f1": 0.86,
        "pre_onset_fa": 1
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 13,
        "point_recall": 0.64,
        "precision": 1.0,
-       "f1": 0.78,
        "pre_onset_fa": 0
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 4,
        "point_recall": 0.91,
        "precision": 1.0,
-       "f1": 0.95,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.82,
        "precision": 1.0,
-       "f1": 0.9,
        "pre_onset_fa": 0
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 31,
-       "point_recall": 0.09,
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
        "precision": 1.0,
-       "f1": 0.17,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3549,11 +5232,13 @@
     "14": {
      "onset": 34,
      "life": 76,
+     "mode": "add",
      "delta": {
       "T48": -98.419
      },
      "realised_cons_plateau": 7.43,
      "realised_regime_plateau": -2.28,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 34.39,
      "rul_rmse_clean": 2.16,
      "rul_rmse_corrupt": 38.99
@@ -3563,73 +5248,113 @@
     "14": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.65,
-       "f1": 0.79,
        "pre_onset_fa": 8
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.68,
-       "f1": 0.81,
        "pre_onset_fa": 7
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "SAT",
+       "latency_cycles": null,
+       "point_recall": 1.0,
+       "precision": 0.75,
+       "pre_onset_fa": 5
+      },
+      "hyst": {
+       "status": "SAT",
+       "latency_cycles": null,
+       "point_recall": 1.0,
+       "precision": 0.79,
+       "pre_onset_fa": 4
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.58,
-       "f1": 0.73,
        "pre_onset_fa": 11
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.6,
-       "f1": 0.75,
        "pre_onset_fa": 10
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 0,
        "point_recall": 1.0,
        "precision": 0.65,
-       "f1": 0.79,
        "pre_onset_fa": 8
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 3,
        "point_recall": 0.93,
        "precision": 0.7,
-       "f1": 0.8,
        "pre_onset_fa": 6
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 3,
-       "point_recall": 0.93,
+       "status": "detected",
+       "latency_cycles": 24,
+       "point_recall": 0.2,
        "precision": 1.0,
-       "f1": 0.97,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 3,
+       "point_recall": 0.93,
+       "precision": 0.78,
+       "pre_onset_fa": 4
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 6,
        "point_recall": 0.87,
        "precision": 1.0,
-       "f1": 0.93,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3642,11 +5367,13 @@
     "14": {
      "onset": 34,
      "life": 76,
+     "mode": "add",
      "delta": {
       "T48": 98.419
      },
      "realised_cons_plateau": 8.75,
      "realised_regime_plateau": 3.04,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 16.4,
      "rul_rmse_clean": 2.16,
      "rul_rmse_corrupt": 17.01
@@ -3656,73 +5383,113 @@
     "14": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.65,
-       "f1": 0.79,
        "pre_onset_fa": 8
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.68,
-       "f1": 0.81,
        "pre_onset_fa": 7
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "SAT",
+       "latency_cycles": null,
+       "point_recall": 1.0,
+       "precision": 0.75,
+       "pre_onset_fa": 5
+      },
+      "hyst": {
+       "status": "SAT",
+       "latency_cycles": null,
+       "point_recall": 1.0,
+       "precision": 0.79,
+       "pre_onset_fa": 4
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.58,
-       "f1": 0.73,
        "pre_onset_fa": 11
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 0,
+       "status": "SAT",
+       "latency_cycles": null,
        "point_recall": 1.0,
        "precision": 0.6,
-       "f1": 0.75,
        "pre_onset_fa": 10
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 0,
        "point_recall": 1.0,
        "precision": 0.65,
-       "f1": 0.79,
        "pre_onset_fa": 8
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 3,
        "point_recall": 0.93,
        "precision": 0.7,
-       "f1": 0.8,
        "pre_onset_fa": 6
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 6,
-       "point_recall": 0.87,
+       "status": "detected",
+       "latency_cycles": 15,
+       "point_recall": 0.67,
        "precision": 1.0,
-       "f1": 0.93,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 9,
-       "point_recall": 0.8,
+       "status": "detected",
+       "latency_cycles": 18,
+       "point_recall": 0.6,
        "precision": 1.0,
-       "f1": 0.89,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 3,
+       "point_recall": 0.93,
+       "precision": 0.78,
+       "pre_onset_fa": 4
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 6,
+       "point_recall": 0.87,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3735,11 +5502,13 @@
     "15": {
      "onset": 30,
      "life": 67,
+     "mode": "add",
      "delta": {
       "T48": -98.419
      },
      "realised_cons_plateau": 8.09,
      "realised_regime_plateau": -2.04,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 36.4,
      "rul_rmse_clean": 1.51,
      "rul_rmse_corrupt": 39.22
@@ -3749,73 +5518,113 @@
     "15": {
      "CUSUM": {
       "raw": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": false,
+       "status": "MISS",
        "latency_cycles": null,
        "point_recall": 0.0,
        "precision": null,
-       "f1": 0.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.85,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.77,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.38,
        "precision": 0.56,
-       "f1": 0.45,
        "pre_onset_fa": 4
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 31,
        "point_recall": 0.08,
        "precision": 0.5,
-       "f1": 0.13,
        "pre_onset_fa": 1
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
+       "status": "detected",
+       "latency_cycles": 7,
        "point_recall": 0.92,
        "precision": 0.75,
-       "f1": 0.83,
        "pre_onset_fa": 4
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.85,
        "precision": 0.92,
-       "f1": 0.88,
        "pre_onset_fa": 1
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.92,
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.23,
        "precision": 1.0,
-       "f1": 0.96,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.08,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.92,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
        "latency_cycles": 7,
        "point_recall": 0.85,
        "precision": 1.0,
-       "f1": 0.92,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.08,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }
@@ -3828,11 +5637,13 @@
     "15": {
      "onset": 30,
      "life": 67,
+     "mode": "add",
      "delta": {
       "T48": 98.419
      },
      "realised_cons_plateau": 8.34,
      "realised_regime_plateau": 3.28,
+     "plateau_def": "b>=0.99",
      "rul_impact_meanabs": 13.7,
      "rul_rmse_clean": 1.51,
      "rul_rmse_corrupt": 14.43
@@ -3842,73 +5653,1624 @@
     "15": {
      "CUSUM": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 28,
        "point_recall": 0.31,
        "precision": 1.0,
-       "f1": 0.47,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 31,
        "point_recall": 0.23,
        "precision": 1.0,
-       "f1": 0.38,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.85,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.77,
+       "precision": 1.0,
        "pre_onset_fa": 0
       }
      },
      "PCA_T2": {
       "raw": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.54,
        "precision": 0.64,
-       "f1": 0.58,
        "pre_onset_fa": 4
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 31,
        "point_recall": 0.15,
        "precision": 0.67,
-       "f1": 0.25,
        "pre_onset_fa": 1
       }
      },
      "PCA_SPE": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 1,
+       "status": "detected",
+       "latency_cycles": 7,
        "point_recall": 0.92,
        "precision": 0.75,
-       "f1": 0.83,
        "pre_onset_fa": 4
       },
       "hyst": {
-       "event_detected": true,
+       "status": "detected",
        "latency_cycles": 1,
        "point_recall": 0.85,
        "precision": 0.92,
-       "f1": 0.88,
        "pre_onset_fa": 1
       }
      },
-     "RULE": {
+     "PCA_T2_REG": {
       "raw": {
-       "event_detected": true,
-       "latency_cycles": 4,
-       "point_recall": 0.92,
+       "status": "detected",
+       "latency_cycles": 22,
+       "point_recall": 0.46,
        "precision": 1.0,
-       "f1": 0.96,
        "pre_onset_fa": 0
       },
       "hyst": {
-       "event_detected": true,
-       "latency_cycles": 7,
-       "point_recall": 0.85,
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.38,
        "precision": 1.0,
-       "f1": 0.92,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.92,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.08,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "m_gain_T48_ramp_1s_neg": {
+   "case": 5,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "gain",
+     "delta": {
+      "T48": -98.419
+     },
+     "realised_cons_plateau": 7.89,
+     "realised_regime_plateau": -2.17,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 36.56,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 42.55
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 22,
+       "point_recall": 0.36,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "m_gain_T48_ramp_1s_pos": {
+   "case": 5,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "gain",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 8.61,
+     "realised_regime_plateau": 3.21,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 13.87,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 11.4
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "m_noise_T48_ramp_1s": {
+   "case": 5,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "noise",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 2.08,
+     "realised_regime_plateau": 0.61,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 5.58,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 11.28
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 28,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.36,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.27,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 22,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "m_stuck_T48": {
+   "case": 5,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "stuck",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 4.37,
+     "realised_regime_plateau": 0.64,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 13.21,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 14.61
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.27,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "m_lag_T48_ramp": {
+   "case": 5,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "lag",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 1.23,
+     "realised_regime_plateau": 0.58,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 1.51,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 4.16
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.27,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "p_exp_T48_1s_neg": {
+   "case": 6,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T48": -98.419
+     },
+     "realised_cons_plateau": 6.23,
+     "realised_regime_plateau": -1.51,
+     "plateau_def": "last5",
+     "rul_impact_meanabs": 34.69,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 41.25
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "p_slow_T48_1s_neg": {
+   "case": 6,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T48": -98.419
+     },
+     "realised_cons_plateau": 4.81,
+     "realised_regime_plateau": -1.04,
+     "plateau_def": "last5",
+     "rul_impact_meanabs": 22.87,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 28.71
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.36,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "p_exp_T48_1s_pos": {
+   "case": 6,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 7.06,
+     "realised_regime_plateau": 2.76,
+     "plateau_def": "last5",
+     "rul_impact_meanabs": 12.27,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 9.28
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 10,
+       "point_recall": 0.73,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 28,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 25,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "p_slow_T48_1s_pos": {
+   "case": 6,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T48": 98.419
+     },
+     "realised_cons_plateau": 5.72,
+     "realised_regime_plateau": 2.29,
+     "plateau_def": "last5",
+     "rul_impact_meanabs": 8.37,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 5.75
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.18,
+       "precision": 0.67,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.36,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.18,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "s_all14_ramp_1s_neg": {
+   "case": 7,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T24": -17.99,
+      "T30": -55.505,
+      "T48": -98.419,
+      "T50": -51.714,
+      "P15": -2.148,
+      "P2": -1.768,
+      "P21": -2.18,
+      "P24": -2.62,
+      "Ps30": -43.882,
+      "P40": -44.527,
+      "P50": -1.902,
+      "Nf": -138.408,
+      "Nc": -184.097,
+      "Wf": -0.568
+     },
+     "realised_cons_plateau": 2.02,
+     "realised_regime_plateau": -30.71,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 3.94,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 10.44
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 13,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 16,
+       "point_recall": 0.55,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.82,
+       "precision": 0.9,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.64,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     }
+    }
+   }
+  },
+  "s_all14_ramp_1s_pos": {
+   "case": 7,
+   "meta": {
+    "11": {
+     "onset": 27,
+     "life": 59,
+     "mode": "add",
+     "delta": {
+      "T24": 17.99,
+      "T30": 55.505,
+      "T48": 98.419,
+      "T50": 51.714,
+      "P15": 2.148,
+      "P2": 1.768,
+      "P21": 2.18,
+      "P24": 2.62,
+      "Ps30": 43.882,
+      "P40": 44.527,
+      "P50": 1.902,
+      "Nf": 138.408,
+      "Nc": 184.097,
+      "Wf": 0.568
+     },
+     "realised_cons_plateau": 2.64,
+     "realised_regime_plateau": 31.75,
+     "plateau_def": "b>=0.99",
+     "rul_impact_meanabs": 2.38,
+     "rul_rmse_clean": 5.09,
+     "rul_rmse_corrupt": 4.02
+    }
+   },
+   "units": {
+    "11": {
+     "CUSUM": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 31,
+       "point_recall": 0.09,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      }
+     },
+     "CUSUM_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.73,
+       "precision": 0.89,
+       "pre_onset_fa": 1
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 19,
+       "point_recall": 0.45,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 7,
+       "point_recall": 0.82,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_T2_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "PCA_SPE_REG": {
+      "raw": {
+       "status": "detected",
+       "latency_cycles": 1,
+       "point_recall": 1.0,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "detected",
+       "latency_cycles": 4,
+       "point_recall": 0.91,
+       "precision": 1.0,
+       "pre_onset_fa": 0
+      }
+     },
+     "KLCPD": {
+      "raw": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
+       "pre_onset_fa": 0
+      },
+      "hyst": {
+       "status": "MISS",
+       "latency_cycles": null,
+       "point_recall": 0.0,
+       "precision": null,
        "pre_onset_fa": 0
       }
      }

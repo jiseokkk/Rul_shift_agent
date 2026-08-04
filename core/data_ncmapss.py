@@ -97,6 +97,59 @@ def load_unit_cycles(unit, biased_channels=None, bias_delta=None, onset_cycle=No
     }
 
 
+# --------------------------------------------------------------------------- #
+# Representation v2 (0804): full-flight series + sliding windows
+# --------------------------------------------------------------------------- #
+def load_unit_series(unit, native=True):
+    """Per-cycle FULL-flight series for a unit, in cycle order.
+
+    native=True returns the raw 1 Hz series (injection level, 0804 §2.1);
+    native=False returns the 10:1 decimated series (detector/storage level).
+
+    Returns dict:
+        unit, fc, cycles (Ncyc,), series (list of (T_c,18) float32 arrays),
+        rul (Ncyc,) float32  -- uncapped median cycles-to-failure per cycle.
+    """
+    split = _split_for_unit(unit)
+    d = _load_split(split)
+    m = d["A"][:, 0] == unit
+    A, X, Y = d["A"][m], d["X"][m], d["Y"][m]
+    fc = int(np.unique(A[:, 2])[0])
+    cycles = np.unique(A[:, 1]).astype(int)
+    cycles.sort()
+    series, rul = [], []
+    for c in cycles:
+        cm = A[:, 1] == c
+        seq = X[cm]
+        series.append(seq if native else seq[::C.DECIMATION])
+        rul.append(float(np.median(Y[cm])))
+    return {"unit": unit, "fc": fc, "cycles": cycles,
+            "series": series, "rul": np.array(rul, dtype=np.float32)}
+
+
+def decimate_flight(seq):
+    """Native (T,18) -> decimated (T//DECIMATION,18): pure subsampling (no filter,
+    0804 §2.1 -- keeps injected noise sigma intact)."""
+    return seq[::C.DECIMATION]
+
+
+def full_flight_windows(dec_seq, window=None, stride=None):
+    """Cut a decimated full-flight (L,18) into length-`window` sliding windows.
+
+    Default: window=C.WINDOW (50), stride=window (non-overlapping, 0804 §2.1).
+    Flights shorter than one window are front-padded to yield one window.
+    Returns (N_c, window, 18) float32.
+    """
+    window = window or C.WINDOW
+    stride = stride or window
+    L = len(dec_seq)
+    if L < window:
+        pad = np.repeat(dec_seq[:1], window - L, axis=0)
+        return np.concatenate([pad, dec_seq], axis=0)[None, :, :]
+    starts = range(0, L - window + 1, stride)
+    return np.stack([dec_seq[s:s + window] for s in starts]).astype(np.float32)
+
+
 def load_training_windows():
     """Sliding-window training set over the 5 flight-class-3 dev units.
 
@@ -117,7 +170,7 @@ def load_training_windows():
     return np.stack(Xall).astype(np.float32), np.array(yall, dtype=np.float32)
 
 
-def pooled_training_timesteps(max_rows=400_000):
+def pooled_training_timesteps(max_rows=1_000_000):
     """Pooled decimated per-timestep samples over the dev training units.
 
     Used to fit the Tier-1 feature models (W-conditioned baseline + cross-channel

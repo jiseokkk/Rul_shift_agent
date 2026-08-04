@@ -35,7 +35,7 @@ def main():
     if not args.skip_train:
         run("core.train_rul")                 # train the LSTM RUL tool
     run("core.build_decisions")               # decision-point packets
-    run("baselines.cusum")                    # threshold + CUSUM baseline
+    run("baselines.cusum.legacy_baseline")    # threshold + CUSUM baseline
     if args.agent == "llm":
         run("llmshift.agent", "--agent", "llm", "--gpu_mem", str(args.gpu_mem))
     run("llmshift.agent", "--agent", "rule")  # always produce the rule reference

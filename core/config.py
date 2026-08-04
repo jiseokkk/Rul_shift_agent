@@ -15,7 +15,7 @@ import os
 # Paths
 # --------------------------------------------------------------------------- #
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root (one level up from core/)
-DATA_H5 = "/home/iai4/Desktop/han/dataset/data_set/N-CMAPSS_DS02-006.h5"
+DATA_H5 = os.path.join(HERE, "dataset", "data_set", "N-CMAPSS_DS02-006.h5")
 
 OUT_DIR = os.path.join(HERE, "outputs")     # model weights, scaler, baselines, feature models
 PKT_DIR = os.path.join(HERE, "packets")     # decision-point packets + agent raw outputs

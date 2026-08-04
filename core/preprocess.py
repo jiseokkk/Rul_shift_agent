@@ -75,16 +75,45 @@ def fit_feature_models():
         pred = r.predict(Xn[:, others])
         cons_resid_std[j] = (Xn[:, j] - pred).std() + 1e-8
 
+    # --- 0804: PC1 loading in the standardized vec_xs CYCLE space (Block D) ---
+    # cycle vector = mean over full-flight sliding windows of the window-mean
+    # z_global (Xs 14 only), computed per clean train unit.
+    cyc_vecs = []
+    unit_rows = {}
+    for unit in C.TRAIN_UNITS:
+        d = D.load_unit_series(unit, native=False)
+        unit_rows[unit] = int(sum(len(s) for s in d["series"]))
+        for dec in d["series"]:
+            wins = D.full_flight_windows(dec)                    # (N_c,50,18)
+            wmean = wins.mean(axis=1)[:, _XS_SL]                 # (N_c,14)
+            zg = (wmean - ch_mean[_XS_SL]) / ch_std[_XS_SL]
+            cyc_vecs.append(zg.mean(axis=0))                     # (14,)
+    V = np.stack(cyc_vecs)                                       # (Ncyc_total,14)
+    Vc = V - V.mean(0)
+    _, S, Vt = np.linalg.svd(Vc, full_matrices=False)
+    pc1_loading = Vt[0]
+    if pc1_loading[C.XS_VARS.index("T48")] < 0:                  # sign convention
+        pc1_loading = -pc1_loading
+    pc1_evr = float(S[0] ** 2 / (S ** 2).sum())
+
     np.savez(
         FEAT_PATH,
         ch_mean=ch_mean, ch_std=ch_std,
         w_mean=w_mean, w_std=w_std,
         regime_coef=reg_regime.coef_,               # (14, P)
-        regime_resid_std=regime_resid_std,          # (14,)
+        regime_resid_std=regime_resid_std,          # (14,) = sigma_res (0804 §2.3)
         poly_powers=poly.powers_,                   # (P,4) to rebuild features
         xs_mean=xs_mean, xs_std=xs_std,
         cons_coef=cons_coef, cons_int=cons_int, cons_resid_std=cons_resid_std,
+        pc1_loading=pc1_loading, pc1_evr=pc1_evr,   # (14,), scalar
     )
+    print("[preprocess] pooled timesteps per train unit (decimated, timestep-level "
+          "weighting -- 0804 Stage 1 policy):")
+    tot = sum(unit_rows.values())
+    for u, n in unit_rows.items():
+        print(f"    u{u:2d}: {n:8d}  ({100*n/tot:.1f}%)")
+    print(f"[preprocess] PC1 evr={pc1_evr:.3f}  loading(T48)="
+          f"{pc1_loading[C.XS_VARS.index('T48')]:.3f}  (cycle vectors n={len(V)})")
     with open(BASE_PATH, "w") as f:
         json.dump({"ch_mean": ch_mean.tolist(), "ch_std": ch_std.tolist(),
                    "vars": C.INPUT_VARS}, f, indent=2)
