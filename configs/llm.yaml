@@ -1,0 +1,24 @@
+# LLM 설정. 호출은 src/agent_rul/agent/llm.py 한 곳에서만 한다 (CLAUDE.md 규칙 3).
+#
+# vLLM 을 OpenAI 호환 서버로 띄워 두고 붙는다:
+#   PY=/home/iai4/miniconda3/envs/LLMshift/bin/python
+#   $PY -m vllm.entrypoints.openai.api_server \
+#       --model /home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ \
+#       --served-model-name qwen2.5-32b-awq \
+#       --quantization awq --max-model-len 32768 --port 8000
+
+model: /home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ   # 서버 /v1/models 의 id 와 일치
+model_path: /home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ   # 기록용 (run_id/스냅샷)
+base_url: http://localhost:8000/v1
+api_key: EMPTY
+
+temperature: 0.0
+seed: 42
+max_tokens: 1500
+top_p: 1.0
+
+max_retries: 2        # 파싱/호출 실패 재시도 (설계서 10.2) — 초과 시 ERROR
+timeout_s: 300
+
+# structured output 방식: json_schema (vLLM guided decoding) → 실패 시 json_mode 로 폴백
+structured_output_method: json_schema

@@ -1,94 +1,116 @@
-# RUL Shift Agent
+# agent_rul — LLM Agent 기반 RUL 입력 센서 이상 탐지 (1차 실험)
 
-LLM 에이전트를 **고정된 RUL 모델 위의 shift 감지·보정·의사결정 레이어**로 쓰는 연구.
-N-CMAPSS DS02-006 터보팬 데이터에 센서 fault(bias/gain/noise/stuck)를 주입하고,
-"센서 fault vs 자연스러운 운항조건 변화"를 구분하는 shift-aware 결정 계층을 만든다.
-predictor는 재학습하지 않는다 — 감지·보정은 전부 모델 바깥의 에이전트 몫.
+설계: [docs/research_plan_v2.md](docs/research_plan_v2.md) · Agent 사양: [docs/agent_spec.md](docs/agent_spec.md) · 폴더 구조: [docs/project_structure.md](docs/project_structure.md) · 흐름 그림: [docs/figures/agent_flow.svg](docs/figures/agent_flow.svg)
 
-**현재 상태 (2026-08-04)**: 본 메소드(LLM)와 비교할 **고전 베이스라인
-(CUSUM·PCA) 통제 벤치마크가 완성·잠금됨** — 오염 데이터셋 50 시나리오 구축,
-9개 detector 변형 실행, 최종 분석까지 완료 (`results/0804_report.md`).
-다음 단계는 이 벤치마크 위에서의 LLM 에이전트 재설계.
+RUL 모델에 들어가는 센서 입력이 정상인지 **비행(cycle)마다** 판정하고, 이상이면 RUL 예측에
+신뢰성 경고를 붙인다. 1차 실험은 single-sensor abrupt bias (T48, α∈{0.5,1,2})만 다룬다.
 
-## 0804 베이스라인 벤치마크 (완료·잠금)
+```
+비행 중   window(5분)마다  EDA Tool: z_w · std_ratio · T² · contribution        ↻
+착륙      EDA Tool: cycle 집계(Δμ, Δσ, exceedance) · RUL Tool: frozen LSTM 예측
+판정      eda.evidence ∥ rul.context → prompt → LLM(structured output) → post_check → Decision
+          (LangGraph 고정 DAG. LLM 이 tool 호출을 결정하지 않는다. cycle 5 부터, 1~4 는 warm-up)
+```
 
-계획서: `docs/0804_cusum_pca_baseline_experiment.md` (설계 근거·프로토콜·사전 등록 예상표 전부 포함)
-
-- **데이터셋** `dataset/corrupted_dataset/` (211MB, 자기완결): native 1Hz 주입 후
-  10:1 decimation. 컨트롤 3 + Block A(σ 절벽 18)/B(느린 drift 2)/C(관계 붕괴 6)/
-  D(부분공간 정렬 8)/E(fault mode 9)/F(natural 중첩 4) = **test 50개 (잠금)** +
-  `devset/` u20 6개(후속 LLM 튜닝 전용, 벤치마크 제외)
-- **detector 9변형**: {CUSUM, PCA-T², PCA-SPE} × 입력 {Raw-Xs(14), Raw-XsW(18),
-  Regime(28: regime_z+consistency_z)} — 입력 사다리로 "W 제거 vs 조건화" 분리 검증
-- **프로토콜**: 듀얼 뷰(native 매 cycle q=0.99 / 비교 3-cycle q=0.97·LLM 비교용),
-  hysteresis 2연속, **paired-clean 유효 탐지**(c₀ ≤ T_fault < T_clean — 자연 열화
-  알람 오크레딧 차단), 상태 5분류, SAT=primary 실패, FA 예산 raw 1회/100cyc
-- **검증**: 자체 CUSUM의 ARL₀를 Montgomery 문헌값과 Monte-Carlo 대조(오차 1~2.3%),
-  PCA 방향성 sanity, 생성 데이터 전수 검증(pre-onset 동일성·seed 재현·delta 일치)
-
-### 핵심 결과 (자세히: `results/0804_report.md`)
-
-**만능 detector 없음** — 블록마다 승자가 다르고, 최강 변형도 구조적 대가를 치른다:
-
-| 변형 | 강점 | 대가 |
-|---|---|---|
-| spe_regime | Block A–D 전승 (0.15σ 포함, latency ~5) | natural unit FA 15.8/100cyc — threshold로 해소 불가 |
-| spe_xs | natural 최강건 (u14 FA 0, Block F 완벽) | PC1 사각 0/6, 저σ adverse(−) 전멸 |
-| cusum 계열 | A–D 견실 (0.89–1.00), ramp40 누적 강점 | Block F SAT 4/4, u14 raw FA 97/100cyc |
-| 공통 | — | **noise 0/54** (window-mean 표현의 구조적 사각) |
-
-신규 발견: **방향 비대칭**(음의 bias가 자연 열화 추세에 숨음 — RUL 과대평가 방향이
-더 안 잡힘), spe_xs의 natural 강건성(상관구조를 따라 움직이는 shift는 SPE에 안 보임),
-비교 뷰 핸디캡 0(LLM 비교 공정성 실측), cusum_xs≡cusum_xsw(W 제거 무용 실증).
+데이터는 cycle 순서대로 스트림으로 들어가고, Tool 은 도착한 cycle 까지만 안다.
 
 ## 실행
 
 ```bash
-# 환경: conda env LLMshift를 절대 경로로 사용 (conda activate가 안 먹는 머신)
 PY=/home/iai4/miniconda3/envs/LLMshift/bin/python
-export PYTHONPATH=/home/iai4/Desktop
+$PY -m pip install -e .                    # 한 번
 
-# 0804 벤치마크 재현 (순서대로; 데이터셋·threshold는 결정적 재생성)
-$PY -c "from han.Rul_shift_agent.core.preprocess import fit_feature_models; fit_feature_models()"
-$PY -m han.Rul_shift_agent.injection.build_dataset          # 50+6 시나리오 생성·검증
-$PY -m han.Rul_shift_agent.baselines.tests.sanity           # ARL0·PCA 검증
-$PY -m han.Rul_shift_agent.baselines.stage2_calibrate       # 18 threshold + 안정성
-$PY -m han.Rul_shift_agent.baselines.run_experiment         # 본 실험 50×9×2뷰
-
-# (구) LLM 에이전트 파이프라인 — 표현 v2 재정렬 전까지 보류
-# $PY -m han.Rul_shift_agent.llmshift.run_all --agent rule --skip_train
+$PY -m agent_rul inspect                   # 데이터 형식 점검, σ_w/σ_global 비율
+$PY -m agent_rul build-reference           # 정상 기준 (clean unit, LLM 없음, 한 번)  ~6s
+$PY -m agent_rul run                       # 스트림 판정  ← 유일하게 느림 (판정당 ~40-60s)
+$PY -m agent_rul evaluate                  # TP/FP/FN/TN, F1, MDD, FAR
+$PY -m agent_rul report                    # 반복 3회 집계, severity 표
 ```
 
-## 폴더 구조
+build-reference 는 한 번. run 은 프롬프트/모델을 바꿀 때마다 재실행하되, 캐시 키에 prompt_hash 가
+있어 안 바뀐 cycle 은 LLM 을 다시 부르지 않는다. evaluate 는 run 결과만 읽으므로 평가 규칙을
+바꿔도 LLM 재호출이 없다.
 
-| 폴더 | 내용 |
-|---|---|
-| `core/` | config, 데이터 로더(표현 v2: 전체 비행 + sliding window), 특징 적합(regime/consistency + PC1), LSTM RUL 모델(보류), 평가 |
-| `injection/` | 데이터셋 생산 계층 — `engine.py`(순수 주입 수학, native 1Hz) + `build_dataset.py`(인벤토리·검증·manifest) |
-| `baselines/` | 소비 계층 — `common.py`(파이프라인·듀얼 뷰·paired-clean), `cusum/`·`pca/`(표준형), `tests/`(검증), `stage2_calibrate.py`, `run_experiment.py` |
-| `llmshift/` | LLM/rule 에이전트 (구 파이프라인 — 벤치마크 완성 후 재설계 예정) |
-| `dataset/corrupted_dataset/` | 잠긴 벤치마크 50 + devset 6 + manifest + preview |
-| `results/` | `0804_stage2_report.md`(검증·캘리브레이션·잠금), `0804_stage3/`(원자료·그림), `0804_report.md`(최종 분석), `scores/`(per-cycle score 50개 — 후속 단계 재사용) |
-| `docs/` | `0804_cusum_pca_baseline_experiment.md`(계획서), `0729_..._baseline_plan.md`(전체 라인업), `references_baselines.md`(서지 검증) |
+**run 전에** vLLM 서버가 떠 있어야 한다:
 
-원본 데이터 `dataset/data_set/`(≈28GB)은 git에 올리지 않는다 — `config.py`의
-`DATA_H5`에 N-CMAPSS DS02-006 h5를 두면 됨. LLM 경로는 `config.py`의 `LLM_PATH`.
+```bash
+$PY -m vllm.entrypoints.openai.api_server \
+    --model /home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ \
+    --max-model-len 32768 --port 8000
+```
 
-## 재현성·잠금 규칙
+`configs/llm.yaml` 의 `model` 은 서버 `/v1/models` 의 `id` 와 정확히 같아야 한다.
 
-- 벤치마크 50개·threshold 18개·프로토콜은 **잠금** (2026-08-04, engine 0804.1) —
-  test 결과 기반 수정 금지, 사후 추가는 "추가 탐색 실험"으로 분리
-- **본 메소드(LLM) 개발·튜닝은 `devset/`(u20)로만** — test는 동결 후 1회 실행
-- 난수 전부 seed 고정, spec.json에 git hash·engine version 스탬프
+### 부분 실행 / 디버깅
 
-## 다음 단계
+```bash
+$PY -m agent_rul run --dry-run                          # Tool 만 돌리고 프롬프트·stats 생성 (LLM 없음)
+$PY -m agent_rul run --scenarios ctrl_u11 --limit 5     # 시나리오 1개, 판정 5 cycle 만
+$PY -m agent_rul run --cycles 26 27 30 --tag smoke      # 특정 cycle 만
+$PY -m agent_rul run --seed 43 --tag rep2               # 반복 실행 (seed 만 변경)
+$PY -m agent_rul run --rul-device cpu                   # LSTM 을 CPU 에서 (vLLM 과 GPU 분리)
+$PY -m agent_rul evaluate --run-id rep2_seed43 --D 10
+$PY -m pytest tests -q                                  # 72 tests
+AGENT_RUL_STRICT_EQUIV=1 $PY -m pytest tests/test_equivalence.py -q   # 예전 산출물과 바이트 비교
+```
 
-1. LLM 에이전트 재설계 (devset 기반; 요구 사항은 `results/0804_report.md` §11 —
-   감도-강건성 중재, 방향 인지, 분산형 신호 커버)
-2. 라인업 확장: OC-MLP → ContextMMD → GDN (`docs/0729_..._baseline_plan.md`),
-   noise/stuck 전용 baseline(variance-CUSUM, flatline)은 LLM 비교 논문 시점 추가
-3. LSTM RUL 모델 표현 v2 재학습 (구 `outputs/rul_lstm.pt`는 stale)
-4. 채널 일반화(압력 채널 Block A 반복), onset 랜덤화 — 추가 탐색 실험
+다른 머신에서 데이터 마운트 경로가 다르면 `AGENT_RUL_PATH_MAP="/home/iai4=X:/home/iai4"`.
 
-> 구 파일럿(0728 이전: cons 기반 난이도, rule-vs-LLM 실험, grid_experiment)은
-> 삭제·대체됨 — 기록은 git 이력과 `docs/NOTION_*.md` 참고.
+## 데이터
+
+| 용도 | 위치 | unit |
+|---|---|---|
+| Clean train (Global + KNN DB) | `dataset/data_set/N-CMAPSS_DS02-006.h5` dev split | 2, 5, 10, 18 |
+| Clean validation (σ_w, q95, Σ_r, T² calibration) | 같음 | 16, 20 |
+| Test 시나리오 (오염 주입) | `dataset/corrupted_dataset/` | 11 |
+
+`series.npz` 는 이미 10:1 decimated(10s 간격)이고 18채널 = 측정 센서 14개
+(`T24 T30 T48 T50 P15 P2 P21 P24 Ps30 P40 P50 Nf Nc Wf`) + 운전조건 4개 (`alt Mach TRA T2`).
+
+1차 실험 시나리오 (`configs/experiment.yaml`):
+
+| scenario_id | 성격 | α | t_f |
+|---|---|---|---|
+| `ctrl_u11` | clean 대조군 | – | – |
+| `A_add_T48_step_0p5_pos_u11` | T48 abrupt bias | 0.5σ | 27 |
+| `A_add_T48_step_1_pos_u11` | T48 abrupt bias | 1.0σ | 27 |
+| `A_add_T48_step_2_pos_u11` | T48 abrupt bias | 2.0σ | 27 |
+
+## 산출물
+
+```
+artifacts/                        # 재계산 가능 (git 제외)
+├── reference/  global.json · knn.npz · calibration.json
+└── cache/      ncmapss unit 캐시 · decisions/{key}.json 판정 캐시
+results/{run_id}/                 # git 제외. run_id = {model}_{tag}_seed{seed}_{timestamp}
+├── config_snapshot.yaml · run.log
+├── decisions.csv                 # 판정 로그
+├── prompts/{sid}_{cycle}.txt     # 실제 전송된 입력
+├── stats/{sid}/                  # 실험 후 파 볼 때: window_stats.csv (window·센서 한 줄, start_sample 로 원본 추적)
+│                                 #   cycle_sensor.csv, cycle.csv, rul.csv
+├── decisions_labeled.csv         # + true_rul, life_fraction (evaluate 가 채움)
+└── metrics.json · sensitivity.json · per_scenario.csv
+```
+
+## 지켜야 하는 규칙
+
+[CLAUDE.md](CLAUDE.md) 참조. 핵심:
+
+1. 데이터셋은 읽기만.
+2. **GT 격리** — manifest.csv, true_rul, t_f, fault 센서는 `evaluation/` 만 읽는다. `data.load_scenario` 는
+   spec.json 에서 4개 필드만 통과시킨다. 위반은 `tests/test_gt_isolation.py` 가 잡는다.
+3. LLM 호출은 `agent/llm.py` 한 곳.
+4. EDA Tool 은 threshold 판정 / Top-K / 센서 제거를 하지 않는다 — 전 센서 반환.
+5. LLM 입력에는 정규화된 값만. raw 통계는 `stats/` 표에만.
+6. 새 통계량은 `tools/eda.py` 와 `agent/prompts.py` 를 함께 수정. `format_input` 출력이 바뀌면 캐시 무효.
+7. 평가 규칙 변경은 `evaluation/classify.py` + `docs/research_plan_v2.md` 12.4 동시 수정.
+8. 경로·파일명은 `configs/paths.yaml → config.py` 경유.
+
+## 재현성 주의
+
+KNN 이웃 검색의 거리 동률(tie) 처리가 scikit-learn 버전에 따라 달라 z_w 가 최대 0.01, T² 는
+(Σ_r 조건수 1e7 때문에) 최대 5~8% 달라질 수 있다. 반복 실험·캐시 재사용은 같은 환경에서만.
+
+## 이전 단계 코드
+
+[reference_code/](reference_code/) 는 참고만 하고 import 하지 않는다. frozen RUL weight 는 [models/frozen_rul/](models/frozen_rul/).

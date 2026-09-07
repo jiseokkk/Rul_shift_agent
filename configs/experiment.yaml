@@ -1,0 +1,63 @@
+# 1차 실험 파라미터. 설계서(docs/research_plan_v2.md) 값과 일치시킨다.
+
+seed: 42
+
+# --- 채널 정의 -------------------------------------------------------------
+# series.npz / HDF5 의 18채널 순서. 앞 14개가 측정 센서(X_s), 뒤 4개가 운전조건(W).
+# reference_code/prev_project/config.py 의 INPUT_VARS 와 동일해야 한다.
+channels:
+  sensors: [T24, T30, T48, T50, P15, P2, P21, P24, Ps30, P40, P50, Nf, Nc, Wf]
+  operating: [alt, Mach, TRA, T2]
+
+# --- 시간 단위 (설계서 2.2) ------------------------------------------------
+# corrupted_dataset/*/series.npz 는 이미 10:1 decimated (= 10s 간격) 상태이므로
+# 추가 decimation 없이 쓴다. HDF5 에서 직접 읽을 때만 decimation=10 을 적용한다.
+time:
+  delta_s_sec: 10          # 샘플 간격
+  L_w_sec: 300             # window 길이 = 5 min
+  samples_per_window: 30   # L_w_sec / delta_s_sec
+  hdf5_decimation: 10      # 원본 1Hz → 10s
+  min_windows_short_flight: 6   # 이 미만이면 short_flight 플래그
+
+# --- cycle 단위 (설계서 5, 12.1) ------------------------------------------
+cycle:
+  L_c: 4          # Agent 입력에 넣는 이전 cycle 수
+  warm_up: 4      # cycle 1~4 는 Agent 미호출, 평가 제외
+
+# --- KNN W-conditioned reference (설계서 3.3, 3.4) ------------------------
+knn:
+  K: 100                      # 설계서 3.4 후보 {50,100,200,500} 중 잠정값
+  max_train_samples: 400000   # pooled train 샘플 상한 (deterministic subsample)
+  query_chunk: 4000           # 이웃 평균 계산 청크 크기 (메모리 보호)
+
+# --- unit split (설계서 10.1 / reference_code prev_project config 와 동일) --
+units:
+  train: [2, 5, 10, 18]    # Global reference + KNN DB
+  calib: [16, 20]          # sigma_w, q95, std_ratio 기준, Sigma_r, T2 calibration
+  test: [11, 14, 15]       # Agent 판정 대상
+
+# --- 1차 실험 시나리오 (single-sensor abrupt bias + control) ---------------
+# manifest.csv 에서 mode=add, profile=step, channels=T48, sigma_mult in {0.5,1,2}.
+# clean 대조군은 controls/ctrl_u11 (같은 unit 11).
+scenarios:
+  - ctrl_u11
+  - A_add_T48_step_0p5_pos_u11
+  - A_add_T48_step_1_pos_u11
+  - A_add_T48_step_2_pos_u11
+
+# --- 평가 (설계서 12.2, 13) ------------------------------------------------
+evaluation:
+  D: 5                  # detection tolerance (cycles)
+  D_sweep: [3, 5, 10]
+  S_sweep: [1, 2, 3, 5] # 검사 주기 sensitivity (재호출 없이 subsampling)
+
+# --- RUL tool (frozen LSTM, reference_code/prev_project/rul_model.py 규칙) --
+rul_model:
+  window: 50            # LSTM 입력 스텝 수 (decimated 기준)
+  n_input: 18
+  hidden: 64
+  layers: 2
+  dropout: 0.3
+  rul_cap: 65           # 학습 target 정의와 동일 (평가에서만 사용)
+  cycle_rule: median    # cycle 전체를 비중첩 50-step window 로 잘라 median
+  device: auto          # auto | cpu | cuda. auto = cuda 있으면 cuda. vLLM 과 GPU 를 나눠 쓰기 싫으면 cpu

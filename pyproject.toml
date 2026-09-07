@@ -1,0 +1,39 @@
+[project]
+name = "agent_rul"
+version = "0.2.0"
+description = "LLM Agent 기반 RUL 입력 센서 이상 탐지 (1차 실험)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.0",
+    "scikit-learn>=1.5",
+    "h5py>=3.10",
+    "pyyaml>=6.0",
+    "torch>=2.0",
+    "pydantic>=2.0",
+    "langchain>=1.0",
+    "langgraph>=0.2",
+    "langchain-openai>=0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+agent-rul = "agent_rul.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+# 실행 환경: /home/iai4/miniconda3/envs/LLMshift/bin/python
+#   $PY -m pip install -e .        # 한 번. 이후 `$PY -m agent_rul <명령>`
+# 주의: KNN 이웃 검색의 거리 동률 처리가 scikit-learn 버전에 따라 달라 z_w 가 1e-3 수준으로
+#       달라질 수 있다. 반복 실험은 같은 환경(같은 sklearn)에서 돌린다.
