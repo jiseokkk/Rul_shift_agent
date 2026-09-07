@@ -1,4 +1,4 @@
-# agent_rul — LLM Agent 기반 RUL 입력 센서 이상 탐지 (1차 실험)
+# agent_rul — LLM Agent 기반 RUL 입력 센서 이상 탐지 
 
 설계: [docs/research_plan_v2.md](docs/research_plan_v2.md) · Agent 사양: [docs/agent_spec.md](docs/agent_spec.md) · 폴더 구조: [docs/project_structure.md](docs/project_structure.md) · 흐름 그림: [docs/figures/agent_flow.svg](docs/figures/agent_flow.svg)
 
