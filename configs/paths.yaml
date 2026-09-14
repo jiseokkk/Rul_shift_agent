@@ -1,0 +1,15 @@
+# 모든 경로는 프로젝트 루트(agent_RUL/) 기준 상대 경로.
+# 심볼릭 링크 대신 여기서 원본 위치를 지정한다 (OS 무관).
+
+rul_repo: RUL                       # 원본 clone 위치 (수정 금지). external/RUL 로 옮기면 여기만 바꾼다
+raw_dir: RUL/dataset/CMAPSS         # train/test/RUL_FD00X.txt
+
+data_dir: data
+split_dir: data/split
+norm_dir: data/norm
+shifted_dir: data/shifted
+
+models_dir: models
+preds_dir: preds
+labels_dir: labels
+reports_dir: reports

@@ -1,0 +1,14 @@
+# Phase C 시나리오 grid (파일럿 초안, 🔶 D-2 후 α 범위 재조정 가능)
+# 시나리오 수/unit = bias 24 + gain 24 + noise 9 + stuck 3 + multi 4 = 64 × 시점 4 = 256
+
+base_seed: 529                       # 시나리오별 rng seed 파생의 기준
+timing_p: [0.2, 0.4, 0.6, 0.8]       # τ_s = round(t0 + p·(T_u − t0)), t0 = seq_len + N (agent.yaml)
+sensors_single: [T24, T30, T50]      # raw 컬럼 6, 7, 8. 모두 모델 입력
+
+types:
+  bias:    {alpha: [0.1, 0.2, 0.3, 0.5], dir: [pos, neg]}
+  gain:    {alpha: [0.1, 0.2, 0.3, 0.5], dir: [pos, neg]}
+  noise:   {beta:  [0.5, 1.0, 2.0]}
+  stuck:   {}
+  multi_C: {sets: [[T24, T30, T50]], alpha: [0.2, 0.3]}
+  multi_I: {sets: [[T24, T30, T50]], alpha: [0.2, 0.3]}

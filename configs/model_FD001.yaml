@@ -1,0 +1,34 @@
+# 원본 Transformer_pre.py / Transformer_ft_serialatten.py 의 FD001 하이퍼파라미터 그대로.
+sub_dataset: FD001
+pre_partner: FD003          # 사전학습 파트너 (원본: FD001 ↔ FD003)
+
+seq_len: 45
+input_size: 17              # op1~3 + 센서 14 (raw 컬럼 6,7,8,11,12,13,15,16,17,18,19,21,24,25)
+max_rul: 125
+norm_type: z-score
+
+num_hidden: 16
+ffn_hidden: 32
+mlp_size: 32
+n_heads: 2
+encoder_layers: 1
+dropout: 0.1
+batch_size: 256
+
+pretrain:
+  lr: 0.001
+  epochs: 20
+  mask_p: 0.6
+  random_p: 0.3
+  seed: 529
+  out_name: pre_FD0013_holdout.pt
+
+finetune:
+  lr: 0.001
+  epochs: 200
+  seeds: [529, 530, 531]
+  base_seed: 529            # 라벨 생성 기준 모델
+
+# 원본은 cuda 일 때만 shuffle=True 였음. 여기서는 항상 shuffle (GPU 실행 시 원본과 동일).
+shuffle: true
+num_workers: 0
