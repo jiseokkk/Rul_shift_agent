@@ -1,0 +1,70 @@
+# Phase D 라벨 설정. 🔶 표시는 D-2(07_delta_analysis) 결과를 보고 확정 후 값을 기록한다.
+# 실험 재현의 핵심 파일. 확정 후 Git 에 커밋.
+
+k: 5                      # 🔶 k-of-m 진입/복귀 지속 조건
+m: 7                      # 🔶
+theta_low_ratio: 0.5      # 🔶 θ_low = ratio · θ_high
+
+# θ_primary 결정 percentile. 07 이 clean-only 대조 진입율 > 5% 이면 99 권고.
+primary_percentile: 95
+
+thetas:
+  # value: null → labels/FD001/meta/clean_variability.json 의 recommended.theta_primary 사용
+  theta_primary: {kind: fixed, value: null}
+  # θ_alt1(t) = max(ratio · ŷ_clean(t), floor). floor 는 theta_primary 값
+  theta_alt1:    {kind: adaptive, ratio: 0.2, floor: theta_primary}
+  # value: null → models/FD001/reproduce_metrics.json 의 base seed test RMSE 사용
+  theta_alt2:    {kind: fixed, value: null, source: test_rmse}
+
+# 민감도 분석 후보 (label_summary --sensitivity)
+sensitivity:
+  k: [3, 5, 7]
+  m: [5, 7, 10]
+
+# ---------------------------------------------------------------- D-2 확정 기록
+# 2026-09-15 확정. 근거: reports/D_delta_distribution.md, reports/D_reversion_diagnostics.md
+# k, m, theta_*, theta_low_ratio 를 바꾸면 08 을 다시 돌려야 한다. eval_mask 는 라벨 불변.
+decision:
+  date: 2026-09-15
+  theta_primary: 9.398713684082026
+  theta_basis: >-
+    V1 p95 (clean adjacent-cycle |dy_hat|, seed 529, n=3217). clean-only control:
+    cycle positive 3.5% (<=5% pass), unit entry 30% (reported as label-noise upper bound).
+    p90 rejected (10.4% / 60%). p99 rejected (control 0% but bias a=0.3 detection collapses).
+  k_m: [5, 7]
+  theta_low_ratio: 0.5
+  k_m_basis: >-
+    09_reversion_diagnostics 의 (k,m) 비교 (보고서 6절). A(flicker) 비율이 (5,7)=6.8%,
+    (7,10)=3.3%, (7,7)=1.4%, (5,10)=9.5% 로 모든 후보에서 30% 임계에 한참 못 미쳐
+    flicker 억제를 위한 변경 근거가 없다. (5,7) 은 그중 저하율이 가장 높아(0.319)
+    라벨 수율이 좋고 지연 median 10 cycle 로 (7,7)의 12 보다 빠르다. 따라서 현행 유지.
+  reversion_diagnosis: >-
+    복귀 이벤트 1594건. flicker(재진입 또는 저하 구간 <10 cycle) 6.8%.
+    나머지 93%는 delta가 RUL->0과 함께 단조 감소해 소멸하는 수명 후반 수렴이며
+    90.4%가 재진입 없는 최종 복귀(pos_in_life median 0.79). 지시서의 B/C 분리는
+    pos 임계(0.9)에 의존적이어서(0.8로 옮기면 뒤집힘) 채택하지 않고 단일 현상으로 본다.
+    flicker < 30% 이므로 (k,m) 및 theta_low_ratio 변경 없음.
+    see reports/D_reversion_diagnostics.md 5-1절
+  reversion_caveat: >-
+    (참고용) 지시서의 A/B/C 규칙을 그대로 적용한 결과와 그 한계. 확정 근거는 reversion_diagnosis 참조.
+    B/C 분해는 신뢰구간이 넓다. B 규칙의 'yhat_clean < theta_primary' 조건은 단독으로
+    0 건 발동하여(중반 이벤트의 yhat<theta 비율이 정확히 0) B 는 사실상 pos_in_life>0.9
+    단독 조건과 같다. 그 임계를 0.9 -> 0.8 로 낮추면 B=56.2% C=37.0% 로 뒤집힌다.
+    C 이벤트는 pos_in_life median 0.79 로 임계 바로 아래에 몰려 있고 90.4% 가 재진입 없는
+    최종 복귀이며, 사례 플롯(7절)에서 delta 가 RUL->0 과 함께 단조 감소해 소멸한다.
+    즉 C 의 상당수는 말기 수렴의 연장으로 보아야 한다. 보고서 5-1 절 참조.
+    다만 A < 30% 라는 결론은 임계와 무관하므로 라벨 확정에는 영향이 없다.
+  eval_mask: >-
+    cycle 단위 평가에서 시나리오별 '최종 1->0 전이 이후 재진입이 없는 구간'을
+    indeterminate로 제외한다 (reversion_events.csv의 is_final_exit & ~reentry_within_20).
+    임계값 없음. 근거: 이 구간의 라벨 0은 정의상 정직하지만 에이전트는 clean 예측을
+    볼 수 없어 delta 소멸을 관측할 방법이 없다. 마스크 적용을 주 결과, 미적용을 부록으로
+    둘 다 보고하고 마스크 비율을 명시한다. unit 단위 평가는 첫 진입만 쓰므로 무관.
+    라벨 파일은 바꾸지 않는다. 마스크 시작 cycle은 labels/FD001/meta/eval_mask.csv
+    (unit, scenario_id, mask_from_cycle)로 별도 생성.
+  eval_mask_file: labels/FD001/meta/eval_mask.csv
+  grid_v3_note: >-
+    2026-09-16 gain neg α 를 {0.25,0.5,0.75} 로 제한 (v2 의 α≥1 neg 는 stuck/반전 고장이었음). θ·k·m 은 clean 예측에서
+    나오므로 불변. 06~12 재실행. v2 결과는 reports/archive/grid_v2.
+  grid_version: 3
+  locked: true

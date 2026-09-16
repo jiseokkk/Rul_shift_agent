@@ -1,0 +1,22 @@
+# 에이전트 단계 경로. 모든 경로는 agent/ 기준 상대 경로.
+# data_prep 산출물은 읽기 전용이다. 여기서 쓰지 않는다.
+
+prep_root: ../data_prep
+
+# ---- 에이전트가 볼 수 있는 입력 (배포 환경에서 관측 가능한 것) ----
+shifted_dir: ../data_prep/data/shifted/FD001            # u{unit}/{scenario_id}.parquet  오염된 센서 궤적 (26컬럼, cycle 1~T_u)
+pred_shift_dir: ../data_prep/preds/FD001/shift/s529      # u{unit}/{scenario_id}.parquet  그 궤적에 대한 RUL 모델 출력 [time, pred]
+raw_dir: ../data_prep/RUL/two_phase/dataset/CMAPSS       # train_FD001.txt  clean 센서 궤적 (hold-out unit 을 골라 씀)
+scenario_index: ../data_prep/labels/FD001/scenario_index.csv   # 메타 컬럼만 (unit, scenario_id, tau_s ...). 결과 컬럼은 채점 전용
+split_json: ../data_prep/data/split/split_FD001.json
+prep_agent_cfg: ../data_prep/configs/agent.yaml           # N (t0 = 45 + N 이 τ_s 를 결정). 바꾸면 data_prep 06 부터 재실행
+
+# ---- 채점 전용 (에이전트 코드에서 import 금지) ----
+pred_clean_dir: ../data_prep/preds/FD001/clean/s529      # counterfactual clean 예측
+state_dir: ../data_prep/labels/FD001/state               # {theta_name}/u{unit}/{scenario_id}.parquet  [time, delta, label, state]
+eval_mask: ../data_prep/labels/FD001/meta/eval_mask.csv  # cycle 단위 채점에서 제외할 구간
+label_cfg: ../data_prep/configs/label.yaml               # θ·k·m 확정값
+
+# ---- 이 프로젝트 산출물 ----
+runs_dir: runs
+reports_dir: reports

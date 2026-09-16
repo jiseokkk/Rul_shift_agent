@@ -1,8 +1,5 @@
-# 재계산 가능한 중간 산출물 (01~03 재실행으로 복구)
-artifacts/
-# 실행 결과 — metrics.json 만 필요하면 개별 강제 추가
-results/
+# 각 단계의 상세 규칙은 data_prep/.gitignore 참조
+agent/runs/*
+!agent/runs/.gitkeep
 __pycache__/
-*.pyc
 .pytest_cache/
-.ipynb_checkpoints/

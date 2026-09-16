@@ -1,0 +1,11 @@
+# 원본 저장소는 torch 버전을 명시하지 않음. 재현에 실제로 쓴 버전을 B-3 실행 시
+# models/FD001/reproduce_metrics.json["env"]["torch"] 에 기록하고, 확정되면 아래를 == 로 고정할 것.
+torch>=1.12,<3
+numpy>=1.23
+pandas>=1.5
+pyarrow>=10
+scikit-learn>=1.1        # 원본 로더 import (FD002/FD004 KMeans). scripts/00 원본 실행에만 필요
+seaborn>=0.12            # 원본 Transformer_ft_serialatten_model.py 가 import. scripts/00 원본 실행에만 필요
+pyyaml>=6
+matplotlib>=3.6
+pytest>=7

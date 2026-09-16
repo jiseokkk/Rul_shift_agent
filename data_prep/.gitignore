@@ -1,0 +1,22 @@
+# 원본 clone (별도 관리, commit hash 는 models/FD001/reproduce_metrics.json 에 기록)
+RUL/
+external/
+
+# 재생성 가능한 대용량 산출물
+data/shifted/
+preds/
+labels/*/delta/
+labels/*/state/
+models/**/*.pt
+models/**/*.bak
+reports/log_*.txt
+# 10_plot_scenario.py 가 만드는 온디맨드 예시 (리포트가 참조하지 않는다)
+reports/figures/scenarios/
+
+# 포함 (재현에 필요한 작은 파일): data/split/*.json, data/norm/*.npy, data/norm/*.json,
+# labels/*/scenario_index.csv, labels/*/meta/*.json, models/*/reproduce_metrics.json, configs/, reports/*.md
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
