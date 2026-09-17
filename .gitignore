@@ -3,3 +3,4 @@ agent/runs/*
 !agent/runs/.gitkeep
 __pycache__/
 .pytest_cache/
+agent/artifacts/

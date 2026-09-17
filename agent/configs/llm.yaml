@@ -1,0 +1,11 @@
+# LLM 호출 설정. 호출은 src/llm/client.py 한 곳에서만.
+base_url: http://localhost:8000/v1
+api_key: EMPTY
+model: /home/iai4/Desktop/SDM/Qwen2.5-32B-AWQ     # vLLM /v1/models 의 id 와 정확히 같아야 한다
+temperature: 0.0
+seed: 42
+max_tokens: 300
+timeout_s: 300
+retries: 2            # 파싱 실패 시 재시도 횟수 (총 시도 = retries + 1)
+concurrency: 8        # probe 실측(2026-09-17): 직렬 2.6s/호출, 동시 8 에서 벽시계 0.25s/호출, 오류 0
+guided_json: true     # vLLM guided decoding 으로 스키마 강제

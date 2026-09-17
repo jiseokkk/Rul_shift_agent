@@ -1,0 +1,52 @@
+unit,scenario_id,desc,type,T_u,tau_s,degraded,tau_d,calls_post,calls_post_unmasked
+57,bias_T24_a1.0_neg_p0.2,bias 강 · 과대(건강해 보임),bias,137,71,True,76.0,67,50.0
+57,bias_T24_a1.0_pos_p0.2,bias 강 · 과소,bias,137,71,True,77.0,67,50.0
+57,bias_T50_a1.0_pos_p0.4,bias 강 · T50 · 중반,bias,137,88,True,95.0,50,25.0
+57,bias_T24_a0.3_neg_p0.2,bias 약 (대부분 음성),bias,137,71,False,,67,67.0
+57,bias_T24_a1.0_pos_p0.8,bias 강 · 말기 (음성 多),bias,137,121,False,,17,17.0
+57,bias_T30_a1.0_pos_p0.2,T30 대조군 · bias,bias,137,71,False,,67,67.0
+57,gain_T24_a2.0_pos_p0.2,gain 강 확대,gain,137,71,True,110.0,67,55.0
+57,gain_T50_a1.0_pos_p0.4,gain 중 · T50,gain,137,88,False,,50,50.0
+57,gain_T24_a0.5_neg_p0.2,gain 축소 (음성),gain,137,71,False,,67,67.0
+57,noise_T50_b3.0_na_p0.2,noise 강,noise,137,71,True,74.0,67,53.0
+57,noise_T24_b1.0_na_p0.4,noise 약,noise,137,88,False,,50,50.0
+57,noise_T30_b3.0_na_p0.2,T30 대조군 · noise,noise,137,71,False,,67,67.0
+57,stuck_T24_na_na_p0.2,stuck T24,stuck,137,71,True,76.0,67,67.0
+57,stuck_T50_na_na_p0.6,stuck T50 · 후반,stuck,137,104,False,,34,34.0
+57,multiC_T24+T30+T50_a0.5_na_p0.2,multi_C 강,multi_C,137,71,True,77.0,67,45.0
+57,multiC_T24+T30+T50_a0.3_na_p0.6,multi_C 약 · 후반,multi_C,137,104,False,,34,34.0
+57,multiI_T24+T30+T50_a0.5_na_p0.2,multi_I,multi_I,137,71,False,,67,67.0
+1,bias_T24_a1.0_neg_p0.2,bias 강 · 과대(건강해 보임),bias,192,82,True,99.0,111,90.0
+1,bias_T24_a1.0_pos_p0.2,bias 강 · 과소,bias,192,82,True,90.0,111,85.0
+1,bias_T50_a1.0_pos_p0.4,bias 강 · T50 · 중반,bias,192,110,True,112.0,83,43.0
+1,bias_T24_a0.3_neg_p0.2,bias 약 (대부분 음성),bias,192,82,False,,111,111.0
+1,bias_T24_a1.0_pos_p0.8,bias 강 · 말기 (음성 多),bias,192,165,False,,28,28.0
+1,bias_T30_a1.0_pos_p0.2,T30 대조군 · bias,bias,192,82,False,,111,111.0
+1,gain_T24_a2.0_pos_p0.2,gain 강 확대,gain,192,82,True,99.0,111,103.0
+1,gain_T50_a1.0_pos_p0.4,gain 중 · T50,gain,192,110,False,,83,83.0
+1,gain_T24_a0.5_neg_p0.2,gain 축소 (음성),gain,192,82,False,,111,111.0
+1,noise_T50_b3.0_na_p0.2,noise 강,noise,192,82,True,90.0,111,78.0
+1,noise_T24_b1.0_na_p0.4,noise 약,noise,192,110,False,,83,83.0
+1,noise_T30_b3.0_na_p0.2,T30 대조군 · noise,noise,192,82,True,113.0,111,38.0
+1,stuck_T24_na_na_p0.2,stuck T24,stuck,192,82,True,108.0,111,111.0
+1,stuck_T50_na_na_p0.6,stuck T50 · 후반,stuck,192,137,True,155.0,56,36.0
+1,multiC_T24+T30+T50_a0.5_na_p0.2,multi_C 강,multi_C,192,82,True,90.0,111,81.0
+1,multiC_T24+T30+T50_a0.3_na_p0.6,multi_C 약 · 후반,multi_C,192,137,False,,56,56.0
+1,multiI_T24+T30+T50_a0.5_na_p0.2,multi_I,multi_I,192,82,False,,111,111.0
+10,bias_T24_a1.0_neg_p0.2,bias 강 · 과대(건강해 보임),bias,222,88,True,128.0,135,115.0
+10,bias_T24_a1.0_pos_p0.2,bias 강 · 과소,bias,222,88,True,112.0,135,115.0
+10,bias_T50_a1.0_pos_p0.4,bias 강 · T50 · 중반,bias,222,122,True,126.0,101,38.0
+10,bias_T24_a0.3_neg_p0.2,bias 약 (대부분 음성),bias,222,88,False,,135,135.0
+10,bias_T24_a1.0_pos_p0.8,bias 강 · 말기 (음성 多),bias,222,189,False,,34,34.0
+10,bias_T30_a1.0_pos_p0.2,T30 대조군 · bias,bias,222,88,False,,135,135.0
+10,gain_T24_a2.0_pos_p0.2,gain 강 확대,gain,222,88,True,122.0,135,129.0
+10,gain_T50_a1.0_pos_p0.4,gain 중 · T50,gain,222,122,True,129.0,101,34.0
+10,gain_T24_a0.5_neg_p0.2,gain 축소 (음성),gain,222,88,False,,135,135.0
+10,noise_T50_b3.0_na_p0.2,noise 강,noise,222,88,True,118.0,135,117.0
+10,noise_T24_b1.0_na_p0.4,noise 약,noise,222,122,False,,101,101.0
+10,noise_T30_b3.0_na_p0.2,T30 대조군 · noise,noise,222,88,True,140.0,135,76.0
+10,stuck_T24_na_na_p0.2,stuck T24,stuck,222,88,True,116.0,135,69.0
+10,stuck_T50_na_na_p0.6,stuck T50 · 후반,stuck,222,155,False,,68,68.0
+10,multiC_T24+T30+T50_a0.5_na_p0.2,multi_C 강,multi_C,222,88,True,104.0,135,76.0
+10,multiC_T24+T30+T50_a0.3_na_p0.6,multi_C 약 · 후반,multi_C,222,155,False,,68,68.0
+10,multiI_T24+T30+T50_a0.5_na_p0.2,multi_I,multi_I,222,88,False,,135,135.0

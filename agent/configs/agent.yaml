@@ -1,0 +1,32 @@
+# 에이전트 v1 설정. 설계: docs/design_v1.md
+N: 10                 # 최근 창 길이 (이력 창). data_prep/configs/agent.yaml 의 N=10 과 같게 둔다 (τ_s 하한 t0 = 45 + N)
+seq_len: 45           # RUL 모델 window. 예측이 존재하는 첫 cycle
+judge_from: 55        # 첫 판정 cycle = seq_len + N. 45~54 는 warm-up (판정 X)
+short_history: 65     # t < 65 이면 short_history 플래그
+
+# 평가 (unit 단위)
+w: 5                  # τ_d 보다 이만큼 이르면 일치로 인정
+D: 5                  # τ_d 보다 이만큼 늦으면 일치로 인정
+theta_name: theta_primary
+
+# 센서 해상도 (level_shift 분모 하한). raw 기록 정밀도
+resolution:
+  T24: 0.01
+  T30: 0.01
+  T50: 0.01
+  P30: 0.01
+  Nf: 0.01
+  Nc: 0.01
+  Ps30: 0.01
+  phi: 0.01
+  NRf: 0.01
+  NRc: 0.01
+  BPR: 0.0001
+  htBleed: 1.0
+  W31: 0.01
+  W32: 0.0001
+
+# RUL Tool 분모 하한
+rul_mad_floor: 0.1
+mc_std_floor: 0.1
+
