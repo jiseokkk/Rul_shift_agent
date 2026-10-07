@@ -1,6 +1,7 @@
-"""vLLM 속도 probe: 실제 프롬프트 n개를 동시 실행 수별로 보내 호출당 시간과 처리량을 잰다. 캐시를 쓰지 않는다.
+"""속도·토큰 probe: 실제 프롬프트 n개를 동시 실행 수별로 보내 호출당 시간, 토큰, reasoning 토큰, 비용을 잰다. 캐시를 쓰지 않는다.
 
   python agent/scripts/probe.py --n 20 --concurrency 1 4
+  python agent/scripts/probe.py --n 20 --concurrency 1 4 --llm llm_openrouter     # OpenRouter. reasoning_tokens 가 0 인지 확인
 """
 from __future__ import annotations
 
@@ -38,10 +39,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=20)
     ap.add_argument("--concurrency", type=int, nargs="*", default=[1, 4])
+    ap.add_argument("--llm", default="llm", help="configs/{name}.yaml")
     a = ap.parse_args()
-    acfg, lcfg = load_cfg("agent"), load_cfg("llm")
+    acfg, lcfg = load_cfg("agent"), load_cfg(a.llm)
     client = LLMClient(lcfg)
-    print("models:", client.list_models())
+    models = client.list_models()
+    print("models:", models if len(models) <= 20 else f"{len(models)}개 (model={lcfg['model']} 포함: {lcfg['model'] in models})")
     prompts = make_prompts(a.n, acfg)
     print(f"prompt chars ≈ {len(prompts[0][0]) + len(prompts[0][1])}")
     for c in a.concurrency:
@@ -52,8 +55,16 @@ def main():
         lat = [o["latency_ms"] / 1000 for o in outs]
         err = sum(1 for o in outs if o["error"])
         tok = [o.get("prompt_tokens") for o in outs if o.get("prompt_tokens")]
+        comp = [o.get("completion_tokens") or 0 for o in outs]
+        reas = [o.get("reasoning_tokens") or 0 for o in outs]
+        cost = [o.get("cost") or 0.0 for o in outs]
         print(f"concurrency {c}: {len(prompts)} calls in {el:.0f}s → {el / len(prompts):.1f}s/call wall, "
-              f"latency mean {sum(lat) / len(lat):.1f}s, errors {err}, prompt_tokens ≈ {tok[0] if tok else '?'}")
+              f"latency mean {sum(lat) / len(lat):.1f}s, errors {err}, prompt_tokens ≈ {tok[0] if tok else '?'}, "
+              f"completion mean {sum(comp) / len(comp):.0f}, reasoning mean {sum(reas) / len(reas):.0f}, "
+              f"cost sum ${sum(cost):.4f}" + (" (usage.cost 미반환)" if not any(cost) else ""))
+        for o in outs:
+            if o["error"]:
+                print("  error:", o["error"][:200])
     d = outs[-1]["decision"]
     print("sample decision:", d.model_dump() if d else outs[-1]["error"])
 

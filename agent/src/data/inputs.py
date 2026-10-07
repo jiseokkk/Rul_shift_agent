@@ -60,9 +60,11 @@ def load_scenario(unit: int, scenario_id: str, paths: dict | None = None) -> Sce
 
 
 def load_scenario_list(name_or_path: str) -> pd.DataFrame:
-    """configs/{name}.csv 또는 경로. 필요한 컬럼: unit, scenario_id. 다른 컬럼(desc 등)은 무시."""
+    """configs/{name}.csv 또는 경로. 필요한 컬럼: unit, scenario_id. 선택: end_cycle (판정을 멈출 cycle, 채점 쪽이 계산해 둔 숫자).
+    다른 컬럼(desc, tau_s 등 메타)은 무시한다."""
     p = Path(name_or_path)
     if not p.exists():
         p = AGENT_ROOT / "configs" / f"{name_or_path}.csv"
     df = pd.read_csv(p)
-    return df[["unit", "scenario_id"]].drop_duplicates().reset_index(drop=True)
+    cols = ["unit", "scenario_id"] + (["end_cycle"] if "end_cycle" in df.columns else [])
+    return df[cols].drop_duplicates(["unit", "scenario_id"]).reset_index(drop=True)

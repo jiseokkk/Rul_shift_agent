@@ -4,10 +4,17 @@ seq_len: 45           # RUL 모델 window. 예측이 존재하는 첫 cycle
 judge_from: 55        # 첫 판정 cycle = seq_len + N. 45~54 는 warm-up (판정 X)
 short_history: 65     # t < 65 이면 short_history 플래그
 
-# 평가 (unit 단위)
-w: 5                  # τ_d 보다 이만큼 이르면 일치로 인정
-D: 5                  # τ_d 보다 이만큼 늦으면 일치로 인정
+# 평가 v2 — 시나리오 단위 (docs/eval_v2_scenario.md). v1 의 w·D 는 legacy_v1 기본값(5, 5)으로만 남음
+# 민감도 분석(스윕)은 설계 단계라 제외 (2026-10-07)
 theta_name: theta_primary
+eval:
+  Delta: 5            # 허용 지연. 창 = [max(τ_s, τ_d − w), τ_d + Δ]
+  w: 0                # 창 앞쪽 여유
+  H: 40               # 비저하 시나리오를 τ_s 이후 지켜보는 길이. 저하 시나리오 관찰 길이(τ_d + Δ − τ_s)의 90% 가 39~44
+  k: 1                # 경보 = 판정 1 이 k 번 연속
+  n_boot: 2000        # unit bootstrap 횟수
+  random_reps: 100    # 무작위 기준선 반복
+  # 판정 절단: runner 는 시나리오 CSV 의 end_cycle (저하 τ_d + Δ, 비저하 τ_s + H; scripts/add_end_cycle.py) 에서 멈춘다
 
 # 센서 해상도 (level_shift 분모 하한). raw 기록 정밀도
 resolution:

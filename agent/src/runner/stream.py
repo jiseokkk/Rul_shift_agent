@@ -1,6 +1,7 @@
 """스트림 실행: 시나리오 하나를 cycle 순서대로 흘려 넣고 judge_from 부터 매 cycle 판정.
 
 도구는 도착한 cycle 까지만 안다. LLM 은 build_input 결과만 본다. 시나리오 id·τ_s·라벨은 여기서 읽지 않는다.
+end_cycle (시나리오 CSV 의 열, 채점 쪽이 계산) 이 있으면 그 cycle 에서 스트림을 끝낸다. 프롬프트에는 들어가지 않는다 (docs/eval_v2_scenario.md §3.5).
 """
 from __future__ import annotations
 
@@ -21,13 +22,14 @@ from src.tools.sensor_tool import SensorTool
 
 
 def run_scenario(unit: int, sid: str, acfg: dict, system: str, client, cache: DecisionCache | None,
-                 rec: RunRecorder, run_id: str, dry_run: bool, save_stats: bool = True) -> list[dict]:
+                 rec: RunRecorder, run_id: str, dry_run: bool, save_stats: bool = True, end_cycle: int | None = None) -> list[dict]:
     sc = load_scenario(unit, sid)
+    last = sc.T_u if end_cycle is None else min(sc.T_u, int(end_cycle))
     st = SensorTool(SENSORS, acfg["resolution"], acfg["N"], acfg["short_history"])
     rt = RULTool(acfg["N"], acfg["rul_mad_floor"], acfg["mc_std_floor"])
     seq_len, judge_from = int(acfg["seq_len"]), int(acfg["judge_from"])
     rows, sensor_stats, rul_stats = [], [], []
-    for t in range(1, sc.T_u + 1):
+    for t in range(1, last + 1):
         st.observe(t, sc.sensors.loc[t].to_dict())
         if t >= seq_len:
             rt.observe(t, float(sc.y_hat.loc[t]), sc.mc.loc[t].to_numpy())
@@ -78,11 +80,13 @@ def run(scenarios: pd.DataFrame, acfg: dict, lcfg: dict, run_id: str, runs_dir: 
         client = LLMClient(lcfg)
         cache = DecisionCache(AGENT_ROOT / "artifacts" / "cache" / "decisions", lcfg["model"], int(lcfg.get("seed", 42)))
     nconc = int(concurrency or lcfg.get("concurrency", 4)) if not dry_run else 1
-    rec.log(f"run {run_id}: {len(scenarios)} scenarios, dry_run={dry_run}, concurrency={nconc}")
+    rec.log(f"run {run_id}: {len(scenarios)} scenarios, dry_run={dry_run}, concurrency={nconc}, "
+            f"end_cycle={'yes' if 'end_cycle' in scenarios.columns else 'no (T_u 까지)'}")
     all_rows, t0 = [], time.time()
     todo = list(scenarios.itertuples(index=False))
     with ThreadPoolExecutor(max_workers=nconc) as ex:
-        futs = {ex.submit(run_scenario, int(r.unit), r.scenario_id, acfg, system, client, cache, rec, run_id, dry_run): r
+        futs = {ex.submit(run_scenario, int(r.unit), r.scenario_id, acfg, system, client, cache, rec, run_id, dry_run,
+                          end_cycle=int(r.end_cycle) if hasattr(r, "end_cycle") and pd.notna(r.end_cycle) else None): r
                 for r in todo}
         for i, f in enumerate(as_completed(futs), 1):
             r = futs[f]

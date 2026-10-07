@@ -1,0 +1,15 @@
+# 로컬 vLLM 0.29 (env vllm-new, GPU 0) · Qwen3.6-35B-A3B-NVFP4-think. 서버: agent/scripts/serve_vllm_new.sh, 일괄 실행: agent/scripts/run_local_or500.sh
+# Qwen3.6-35B-A3B NVFP4 · thinking 켬 (--reasoning-parser qwen3, max-model-len 8192). 사용: --llm llm_local_qwen36_35b_a3b_nvfp4_think
+# model 은 서버의 --served-model-name 과 같아야 한다. 캐시 디렉터리 키 = model|seed → 변형(thinking on/off)마다 다른 이름.
+base_url: http://localhost:8000/v1
+api_key: EMPTY
+model: Qwen3.6-35B-A3B-NVFP4-think
+temperature: 0.0
+seed: 42
+max_tokens: 6000
+timeout_s: 600
+retries: 2
+concurrency: 16                 # probe 로 8/16 비교 후 조정
+json_mode: response_format      # vLLM 0.29 는 guided_json 필드를 없앴다 → response_format json_schema (xgrammar)
+strict: true
+strict_strip: []                # xgrammar 는 maxLength 를 받으므로 Qwen2.5 guided_json 때와 같은 스키마를 그대로 보낸다

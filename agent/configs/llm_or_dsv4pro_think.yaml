@@ -1,0 +1,24 @@
+# OpenRouter · DeepSeek V4 Pro (GA 0813) · Baidu fp8 · reasoning 켬. 사용: --llm llm_or_dsv4pro_think
+# 선정 근거·단가(2026-10-01): Baidu 입력 $0.133 / 출력 $0.40 per 1M. DeepSeek 공식 서빙은 $0.66 / $1.98 이라 provider 고정 필수.
+# 키: 저장소 루트 .env 의 OPENROUTER_API_KEY. 캐시 디렉터리 키 = model|seed.
+base_url: https://openrouter.ai/api/v1
+api_key_env: OPENROUTER_API_KEY
+model: deepseek/deepseek-v4-pro-0813
+temperature: 0.0
+send_temperature: true          # Baidu 엔드포인트 temperature 지원
+seed: 42
+send_seed: false                # Baidu 엔드포인트 seed 미지원 (require_parameters 와 충돌 방지)
+max_tokens: 4000                # reasoning 토큰이 이 한도에 포함된다
+timeout_s: 180
+retries: 3
+rate_limit_wait_s: 20
+concurrency: 8
+json_mode: response_format
+strict: true
+strict_strip: [maxLength]
+reasoning_enabled: true         # thinking 켬. probe 로 reasoning 길이를 재고 비용을 정한다
+usage_include: true
+provider:
+  order: [baidu]
+  allow_fallbacks: false
+  require_parameters: true      # response_format·temperature 를 지원하는 엔드포인트만

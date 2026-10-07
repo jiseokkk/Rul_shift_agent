@@ -4,6 +4,7 @@
   python agent/scripts/run.py --scenarios pilot_scenarios --tag pilot        # 본 실행 (vLLM 서버 필요)
   python agent/scripts/run.py --scenarios pilot_scenarios --units 57 --tag u57   # 일부 unit 만
   python agent/scripts/run.py ... --concurrency 8
+  python agent/scripts/run.py --scenarios sample_or500 --llm llm_openrouter --tag or500   # OpenRouter (configs/llm_openrouter.yaml)
 """
 from __future__ import annotations
 
@@ -24,9 +25,10 @@ def main():
     ap.add_argument("--concurrency", type=int, default=None)
     ap.add_argument("--tag", default="run")
     ap.add_argument("--run-id", default=None)
+    ap.add_argument("--llm", default="llm", help="configs/{name}.yaml. vLLM: llm, OpenRouter: llm_openrouter")
     a = ap.parse_args()
 
-    acfg, lcfg = load_cfg("agent"), load_cfg("llm")
+    acfg, lcfg = load_cfg("agent"), load_cfg(a.llm)
     scen = load_scenario_list(a.scenarios)
     if a.units:
         scen = scen[scen["unit"].isin(a.units)]

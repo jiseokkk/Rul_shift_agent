@@ -4,3 +4,4 @@ agent/runs/*
 __pycache__/
 .pytest_cache/
 agent/artifacts/
+.env

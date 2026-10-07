@@ -46,3 +46,20 @@ def test_build_input_shape():
     assert "bias" not in txt and "scenario" not in txt.lower()
     assert "resid" not in system_prompt() and "level_shift" in system_prompt()
     assert json_schema()["required"] == ["degraded", "suspected_sensors", "confidence", "rationale"]
+
+
+def test_request_body_vllm_and_openrouter():
+    from src.llm.client import request_body
+    vllm = {"model": "/m/Qwen", "temperature": 0.0, "seed": 42, "max_tokens": 300, "guided_json": True}
+    body, extra = request_body(vllm, "S", "U", 42)
+    assert body["temperature"] == 0.0 and body["seed"] == 42 and "response_format" not in body
+    assert extra["guided_json"]["required"] == ["degraded", "suspected_sensors", "confidence", "rationale"]
+    orr = {"model": "openai/gpt-5.4-mini", "seed": 42, "max_tokens": 300, "send_temperature": False, "json_mode": "response_format",
+           "strict": True, "strict_strip": ["maxLength"], "reasoning_effort": "none", "usage_include": True}
+    body, extra = request_body(orr, "S", "U", 42)
+    assert "temperature" not in body and body["seed"] == 42 and "guided_json" not in extra
+    schema = body["response_format"]["json_schema"]["schema"]
+    assert body["response_format"]["json_schema"]["strict"] is True and schema["additionalProperties"] is False
+    assert "maxLength" not in schema["properties"]["rationale"] and schema["properties"]["confidence"]["maximum"] == 1.0
+    assert extra["reasoning"] == {"effort": "none"} and extra["usage"] == {"include": True}
+    assert body["messages"] == [{"role": "system", "content": "S"}, {"role": "user", "content": "U"}]

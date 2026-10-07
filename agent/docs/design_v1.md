@@ -229,7 +229,15 @@ LLM 출력은 텍스트라 형식 깨짐·필드 모순·잘못된 이름이 실
 
 ---
 
-## 7. 평가 v1
+## 7. 평가 v1 — 2026-10-07 대체됨
+
+cycle 단위 + unit 단위 평가는 [eval_v2_scenario.md](eval_v2_scenario.md) 의 시나리오 단위 평가로 대체되었다.
+이유: "τ_s 이후 첫 판정 1" 은 오염 전부터 켜진 경보를 첫 경보로 다시 잡아 항상-1 판정기가 DR 0.31 을 받았고, cycle 단위 FAR 은
+clean 2.4k 대 무해한 오염 233k 의 불균형으로 사실상 무해한 오염 경보율을 쟀다 (v1_failure_analysis.md §1.2, §2.7).
+v1 채점 코드는 `src/eval/legacy_v1.py` (→ `runs/{run_id}/eval_v1/`) 에 남아 있다. 원문은 아래에 접어 둔다.
+
+<details><summary>v1 평가 규약 원문</summary>
+
 
 에이전트 판정은 cycle 단위 하나. 그것을 두 축으로 채점한다.
 
@@ -277,6 +285,10 @@ w를 두는 이유: τ_d는 θ 선택에 따라 앞뒤로 몇 cycle 움직이는
 ### 7-3. 추후 (v1 이후, 판정 로그만 있으면 재호출 없이 계산)
 
 AUROC(confidence), FAR 세 부류 분리(clean / 오염 후 미저하 / 복귀 후), 비저하 시나리오 FAR, Isolation(suspected_sensors vs 주입 센서), precision(π), unit 부트스트랩 CI, θ_alt1/alt2 재채점, w·D·N 스윕, 판정 주기 S subsample, 정확도 개선 양성의 탐지율.
+
+---
+
+</details>
 
 ---
 
